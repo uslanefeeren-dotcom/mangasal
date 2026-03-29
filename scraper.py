@@ -8,17 +8,13 @@ VoidScans Scraper v4 — TAM OKUMA DESTEĞİ
 API: http://localhost:5000
 """
 
-import sqlite3, json, time, re, logging, os
+import sqlite3, json, time, re, logging
 from datetime import datetime
 from threading import Thread
 
 import requests
-try:
-    import psycopg2, psycopg2.extras, urllib.parse as urlparse
-except ImportError:
-    psycopg2 = None
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify, request, Response, stream_with_context, send_from_directory
+from flask import Flask, jsonify, request, Response, stream_with_context
 from flask_cors import CORS
 
 # ─── AYARLAR ───────────────────────────────────
@@ -44,30 +40,7 @@ HEADERS = {
     "Accept-Language": "tr-TR,tr;q=0.9",
 }
 
-# Railway PostgreSQL veya lokal SQLite
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
-DB = DATABASE_URL if DATABASE_URL and DATABASE_URL.startswith("postgres") else os.environ.get("DB_PATH", "voidscans.db")
-USE_POSTGRES = bool(DATABASE_URL and DATABASE_URL.startswith("postgres"))
-
-def get_conn():
-    if USE_POSTGRES and psycopg2:
-        url = DATABASE_URL.replace("postgres://", "postgresql://", 1) if DATABASE_URL.startswith("postgres://") else DATABASE_URL
-        r = urlparse.urlparse(url)
-        conn = psycopg2.connect(database=r.path[1:], user=r.username, password=r.password, host=r.hostname, port=r.port)
-        return conn
-    else:
-        conn = sqlite3.connect(DB)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-def db_exec(c, sql, params=()):
-    if USE_POSTGRES and psycopg2:
-        sql = sql.replace("?", "%s").replace("datetime('now')", "NOW()").replace(" AUTOINCREMENT", "")
-    try:
-        c.execute(sql, params)
-    except Exception as e:
-        log.warning("DB exec error: %s", e)
-        raise
+DB       = "voidscans.db"
 INTERVAL = 2
 DELAY    = 1.0
 
@@ -863,21 +836,10 @@ def scheduler():
 
 # ─── FLASK API ─────────────────────────────────
 app = Flask(__name__)
+init_db()
+from threading import Thread as _T
+_T(target=scheduler, daemon=True).start()
 CORS(app)
-
-
-# ─── STATİK DOSYA SERVE ────────────────────────
-@app.route('/')
-def serve_index():
-    return send_from_directory('.', 'index.html')
-
-@app.route('/reader')
-def serve_reader():
-    return send_from_directory('.', 'reader.html')
-
-@app.route('/admin')
-def serve_admin():
-    return send_from_directory('.', 'admin.html')
 
 def rows(sql, params=()):
     c = sqlite3.connect(DB)
@@ -1415,5 +1377,4 @@ if __name__ == "__main__":
     init_db()
     Thread(target=scheduler, daemon=True).start()
     log.info("API: http://localhost:5000")
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=5000, debug=False)
