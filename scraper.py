@@ -14,7 +14,7 @@ from threading import Thread
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify, request, Response, stream_with_context, send_from_directory
+from flask import Flask, jsonify, request, Response, stream_with_context
 from flask_cors import CORS
 
 # ─── AYARLAR ───────────────────────────────────
@@ -837,6 +837,8 @@ def scheduler():
 # ─── FLASK API ─────────────────────────────────
 app = Flask(__name__)
 CORS(app)
+init_db()
+Thread(target=scheduler, daemon=True).start()
 
 def rows(sql, params=()):
     c = sqlite3.connect(DB)
@@ -1370,22 +1372,6 @@ def save_settings():
         c.execute("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,datetime('now')) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=datetime('now')",(key,str(val)))
     c.commit(); c.close()
     return jsonify({"status":"ok"})
-
-# ─── HTML SAYFALAR ─────────────────────────────
-import os
-
-@app.route("/")
-def index():
-    return send_from_directory(".", "index.html")
-
-@app.route("/reader.html")
-def reader():
-    return send_from_directory(".", "reader.html")
-
-@app.route("/admin.html")
-def admin():
-    return send_from_directory(".", "admin.html")
-
 if __name__ == "__main__":
     init_db()
     Thread(target=scheduler, daemon=True).start()
