@@ -8,13 +8,13 @@ VoidScans Scraper v4 — TAM OKUMA DESTEĞİ
 API: http://localhost:5000
 """
 
-import sqlite3, json, time, re, logging
+import sqlite3, json, time, re, logging, os
 from datetime import datetime
 from threading import Thread
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify, request, Response, stream_with_context
+from flask import Flask, jsonify, request, Response, stream_with_context, send_from_directory
 from flask_cors import CORS
 
 # ─── AYARLAR ───────────────────────────────────
@@ -727,6 +727,20 @@ def rows(sql, params=()):
     c.close()
     return out
 
+# ─── STATİK DOSYALAR ──────────────────────────
+@app.route('/')
+def home():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/reader.html')
+def reader():
+    return send_from_directory('.', 'reader.html')
+
+@app.route('/admin.html')
+def admin():
+    return send_from_directory('.', 'admin.html')
+
+# API ROUTES
 @app.route("/api/trending")
 def trending():
     ct = request.args.get("type","")
@@ -1220,10 +1234,9 @@ def save_settings():
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
-# ─── DOSYA YÜKLEME ENDPOINT'i (YENİ) ───────────
+# ─── DOSYA YÜKLEME ENDPOINT'i ────────────────
 @app.route('/api/upload-db', methods=['POST'])
 def upload_db():
-    import os
     data = request.get_data()
     if not data:
         return jsonify({"status":"error","message":"Dosya boş"}), 400
