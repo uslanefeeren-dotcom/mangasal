@@ -243,7 +243,6 @@ def get_page(url, session):
         return None
 
 def parse_bsx(card, base_url=""):
-    """Gölge Bahçesi / AduManga — .bsx kart yapısı"""
     a = card.select_one("a")
     if not a: return None
     url   = a.get("href","")
@@ -252,29 +251,22 @@ def parse_bsx(card, base_url=""):
         tt = a.select_one(".tt")
         title = tt.get_text(strip=True) if tt else ""
     if not title or not url: return None
-
-    # Relative URL'leri düzelt
     if url.startswith("../"):
         url = base_url + "/" + url.lstrip("../")
     elif url.startswith("/") and not url.startswith("//"):
         url = base_url + url
     elif not url.startswith("http"):
         url = base_url + "/" + url.lstrip("/")
-
-    # Duyuru / reklam serilerini filtrele
     skip_words = ["duyuru", "announcement", "kapanış", "açılış", "haber",
                   "site ", "discord", "sponsor", "reklam", "bilgi"]
     if any(w in title.lower() for w in skip_words):
         return None
-
     img = a.select_one("img")
     cover = ""
     if img:
         cover = img.get("data-src") or img.get("data-lazy-src") or img.get("src") or ""
-    # Kapak da relative olabilir
     if cover and cover.startswith("/") and not cover.startswith("//"):
         cover = base_url + cover
-
     type_span = a.select_one("span.type")
     content_type = "Manhwa"
     if type_span:
@@ -282,23 +274,18 @@ def parse_bsx(card, base_url=""):
             if cls.lower() != "type":
                 content_type = cls.strip().title()
                 break
-
     ep_el = a.select_one(".epxs")
     latest = ep_el.get_text(strip=True) if ep_el else ""
-
     rating = 0.0
     sc = a.select_one(".numscore")
     if sc:
         try: rating = float(sc.get_text(strip=True).replace(",","."))
         except: pass
-
     return dict(url=url, slug=url.rstrip("/").split("/")[-1],
                 title=title, cover=cover, content_type=content_type,
                 latest_chapter=latest, rating=rating)
 
-
 def parse_madara(card):
-    """Webtoon Hattı — .page-item-detail (Madara teması) kart yapısı"""
     a = (card.select_one(".item-thumb a") or
          card.select_one("h3 a") or card.select_one("a"))
     if not a: return None
@@ -308,101 +295,68 @@ def parse_madara(card):
         h = card.select_one(".h5 a, h3 a, h4 a")
         title = h.get_text(strip=True) if h else ""
     if not title or not url: return None
-
-    # Kapak
     img = card.select_one("img")
     cover = ""
     if img:
         cover = (img.get("data-src") or img.get("data-lazy-src") or
                  img.get("src") or "")
-
-    # İçerik türü
     content_type = "Manhwa"
     for cls in (card.get("class") or []):
         if cls.lower() in ("manga","manhwa","manhua"):
             content_type = cls.strip().title()
             break
-
-    # Son bölüm — .manga-chapter-list içindeki ilk link
     latest = ""
     chap_links = card.select(".manga-chapter-list a")
     if chap_links:
         latest = chap_links[0].get_text(strip=True)
     else:
-        # Alternatif selector
         chap_items = card.select(".chapter-item")
         if chap_items:
             ca = chap_items[0].select_one("a")
             if ca: latest = ca.get_text(strip=True)
-
-    # Rating
     rating = 0.0
     sc = card.select_one(".score.total_votes, .total_votes, .score")
     if sc:
         try: rating = float(sc.get_text(strip=True).replace(",","."))
         except: pass
-
-    # Slug — kaynak siteyi prefix olarak ekle, çakışma olmasın
-    # golgebahcesi: /manga/solo-leveling/ → solo-leveling
-    # webtoonhatti: /webtoon/solo-leveling/ → wh-solo-leveling
     raw_slug = url.rstrip("/").split("/")[-1]
-    slug = f"wh-{raw_slug}"  # webtoon hattı prefix
-
+    slug = f"wh-{raw_slug}"
     return dict(url=url, slug=slug, title=title, cover=cover,
                 content_type=content_type, latest_chapter=latest, rating=rating)
 
-
-
-
 def parse_ragnar(card):
-    """Ragnar Scans — .manga-card kart yapısı (UIkit teması)"""
     a = card.select_one("a")
     if not a: return None
     url   = a.get("href","")
     if not url: return None
-
-    # Başlık
     title_el = card.select_one(".manga-overlay-title")
     title = title_el.get_text(strip=True) if title_el else ""
     if not title:
         title = a.get("title","") or ""
     if not title: return None
-
-    # Kapak
     img = card.select_one("img")
     cover = ""
     if img:
         cover = (img.get("data-src") or img.get("data-lazy-src") or
                  img.get("src") or "")
-
-    # İçerik türü — varsayılan Manhwa (Türkçe scan sitesi)
     content_type = "Manhwa"
-
-    # Türler
     genre_el = card.select_one(".manga-overlay-genres, .slider-genres")
     genres_raw = []
     if genre_el:
         genres_raw = [g.strip() for g in genre_el.get_text().split("·") if g.strip()]
-
-    # Durum
     status_el = card.select_one(".manga-status-badge, .manga-status-ribbon")
     status = status_el.get_text(strip=True) if status_el else "Devam Ediyor"
-
     slug = "rg-" + url.rstrip("/").split("/")[-1]
-
     return dict(url=url, slug=slug, title=title, cover=cover,
                 content_type=content_type, latest_chapter="",
                 rating=0.0, genres_raw=genres_raw, status=status)
 
 def scrape_list(source_key, url, session):
-    """Tüm siteler için doğru parser ve URL formatını kullanarak sayfa sayfa çek"""
     parser_type = SOURCES[source_key].get("parser", "bsx")
     page_url_tpl = SOURCES[source_key].get("page_url", None)
     items, page = [], 1
     empty_streak = 0
-
     while page <= 100:
-        # URL formatı: Ragnar /page/N/, diğerleri ?page=N
         if page_url_tpl and page > 1:
             purl = page_url_tpl.format(page=page)
         elif page_url_tpl and page == 1:
@@ -410,25 +364,19 @@ def scrape_list(source_key, url, session):
         else:
             sep  = "&" if "?" in url else "?"
             purl = f"{url}{sep}page={page}"
-
         r    = get_page(purl, session)
         if not r:
             empty_streak += 1
             if empty_streak >= 3: break
             page += 1
             continue
-
         soup = BeautifulSoup(r.text, "html.parser")
-
-        # Siteye göre doğru selector
         if parser_type == "madara":
             cards = soup.select(".page-item-detail")
         elif parser_type == "ragnar":
             cards = soup.select(".manga-card")
         else:
             cards = soup.select(".bsx") or soup.select(".bs")
-
-        # Boş sayfa — 2 art arda boş sayfa gelirse dur
         if not cards:
             empty_streak += 1
             log.info("  %s sayfa %d: kart yok (%d/2)", source_key, page, empty_streak)
@@ -436,7 +384,6 @@ def scrape_list(source_key, url, session):
             page += 1
             time.sleep(DELAY)
             continue
-
         empty_streak = 0
         base_url = SOURCES[source_key]["base"]
         for card in cards:
@@ -447,13 +394,8 @@ def scrape_list(source_key, url, session):
             else:
                 item = parse_bsx(card, base_url)
             if item: items.append(item)
-
         log.info("  %s sayfa %d → %d kart (toplam: %d)", source_key, page, len(cards), len(items))
-
-        # Sonraki sayfa kontrolü
-        # Ragnar: <link rel="next"> kullanır, page_url_tpl varsa sayfa sayısını biliyoruz
         if parser_type == "ragnar":
-            # Ragnar'da son sayfa 14, kart varsa devam et
             has_next = bool(soup.find("link", rel="next"))
             if not has_next:
                 break
@@ -468,39 +410,26 @@ def scrape_list(source_key, url, session):
                 continue
             elif not next_btn:
                 break
-
         page += 1
         time.sleep(DELAY)
-
     return items
 
 def scrape_detail(url, session):
-    """
-    Seri detay sayfası — bölüm listesi dahil.
-    Gölge Bahçesi (.bsx) ve Webtoon Hattı (Madara) her ikisini destekler.
-    """
     import html as html_module
-
     r = get_page(url, session)
     if not r: return {}
     r.encoding = r.apparent_encoding or 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
-
-    # ── Açıklama ──
     desc_el = (soup.select_one(".entry-content") or
                soup.select_one(".synops") or
                soup.select_one(".summary__content") or
                soup.select_one(".description-summary"))
     desc = desc_el.get_text(" ", strip=True)[:500] if desc_el else ""
-
-    # ── Durum ──
     status = "Devam Ediyor"
     for el in soup.select(".tsinfo .imptdt, .infox .fmed, .imptdt, .post-status .summary-content"):
         t = el.get_text(strip=True).lower()
         if "completed" in t or "tamamlandı" in t: status="Tamamlandı"; break
         if "hiatus" in t or "durduruldu" in t:    status="Durduruldu"; break
-
-    # ── Türler ──
     genre_els = (soup.select(".mgen a") or
                  soup.select(".genres-content a") or
                  soup.select("a[href*='/genres/']") or
@@ -509,26 +438,17 @@ def scrape_detail(url, session):
                  soup.select(".manga-genres a") or
                  soup.select(".genre-list a"))
     raw_genres = [g.get_text(strip=True) for g in genre_els]
-
-    # Ragnar Scans için türleri farklı çek (span veya div içinde · ile ayrılmış)
     if not raw_genres:
         genre_el = soup.select_one(".manga-genres, .genres, .series-genres")
         if genre_el:
             raw_genres = [g.strip() for g in genre_el.get_text().split("·") if g.strip()]
-
-    # ── Bölüm Listesi ──
     chapters = []
-
-    # Kaynak site base URL'sini bul
     from urllib.parse import urljoin
-    base_url = "/".join(url.split("/")[:3])  # https://site.com
-
+    base_url = "/".join(url.split("/")[:3])
     def fix_url(u):
         if not u: return u
         if u.startswith("http"): return u
-        return urljoin(url, u)  # relative → absolute
-
-    # Yöntem 0: Ragnar Scans — .chapter-list a.uk-link-toggle
+        return urljoin(url, u)
     ragnar_chaps = soup.select(".chapter-list a.uk-link-toggle, .chapter-list a")
     if ragnar_chaps:
         for a in ragnar_chaps:
@@ -543,8 +463,6 @@ def scrape_detail(url, session):
             chapters.append({"num": num_text, "title": num_text,
                              "url": chap_url, "date": date})
         log.info("Ragnar direkt: %d bölüm — %s", len(chapters), url.split("/")[-2])
-
-    # Yöntem 1: Gölge Bahçesi / AduManga — #chapterlist li
     if not chapters:
         chapter_items = soup.select("#chapterlist li, .eplister li")
         for li in chapter_items:
@@ -560,8 +478,6 @@ def scrape_detail(url, session):
             date = date_el.get_text(strip=True) if date_el else ""
             chapters.append({"num": num_text, "title": num_text,
                              "url": chap_url, "date": date})
-
-    # Yöntem 2: Madara teması — .wp-manga-chapter li
     if not chapters:
         chapter_items = soup.select(".wp-manga-chapter, .listing-chapters_wrap li")
         for li in chapter_items:
@@ -574,8 +490,6 @@ def scrape_detail(url, session):
             date = date_el.get_text(strip=True) if date_el else ""
             chapters.append({"num": num_text, "title": num_text,
                              "url": chap_url, "date": date})
-
-    # Yöntem 3: AJAX — iki site de destekler (bölüm listesi JS ile yükleniyorsa)
     if not chapters:
         post_id = ""
         for pattern in [
@@ -587,7 +501,6 @@ def scrape_detail(url, session):
         ]:
             m = re.search(pattern, r.text)
             if m: post_id = m.group(1); break
-
         if post_id:
             log.info("AJAX bölüm çekme: post_id=%s", post_id)
             try:
@@ -622,26 +535,19 @@ def scrape_detail(url, session):
                     log.info("AJAX: %d bölüm", len(chapters))
             except Exception as e:
                 log.warning("AJAX hatası: %s", e)
-
     log.info("Toplam bölüm: %d — %s", len(chapters), url.split("/")[-2])
     return dict(description=desc, status=status, raw_genres=raw_genres,
                 chapter_count=len(chapters), chapters=chapters,
                 last_updated=chapters[0]["date"] if chapters else "")
 
 def scrape_chapter_images(chap_url, session):
-    """Bir bolumun resim URL'lerini cek"""
     r = get_page(chap_url, session)
     if not r: return []
-    
-    # Encoding duzelt
     r.encoding = r.apparent_encoding or 'utf-8'
     html_text = r.text
     soup = BeautifulSoup(html_text, "html.parser")
-    
-    # ts_reader.run JSON parse — Gölge Bahçesi bu formatı kullanır
     urls = []
     seen = set()
-
     if 'ts_reader.run' in html_text:
         try:
             start_idx = html_text.find('ts_reader.run(')
@@ -670,8 +576,6 @@ def scrape_chapter_images(chap_url, session):
                     return urls
         except Exception as e:
             log.debug("ts_reader parse hatası: %s", e)
-
-        # 2. HTML selector'larini dene
     selectors = [
         "#readerarea img",
         ".readerarea img", 
@@ -680,48 +584,36 @@ def scrape_chapter_images(chap_url, session):
         ".page-break img",
         "div.chapter-c img",
         "div[class*='reader'] img",
-        ".entry-content .separator img",  # Blogger tarzı
+        ".entry-content .separator img",
     ]
-    
     imgs = []
     for sel in selectors:
         found = soup.select(sel)
         if found and len(found) > len(imgs):
             imgs = found
-    
-    # 3. Hala bulunamadiysa daha genis ara
     if not imgs or len(imgs) < 2:
-        # Sidebar ve header haric tum img'leri al
         main_content = soup.select_one('article, main, .content, #content, .post-body')
         if main_content:
             imgs = main_content.select('img')
         else:
             imgs = soup.select('img')
-    
     for img in imgs:
-        # Tum olasi attribute'lari kontrol et
         src = (img.get("data-src") or 
                img.get("data-lazy-src") or 
                img.get("data-original") or
                img.get("data-cfsrc") or
                img.get("data-pagespeed-lazy-src") or
                img.get("src") or "")
-        
-        # Bos veya gecersiz URL'leri atla
         if not src or not src.startswith("http"):
             continue
         if src in seen:
             continue
-        
-        # Kapak, logo, ikon ve reklam resimlerini filtrele
         skip_keywords = ['logo', 'icon', 'avatar', 'banner', 'ads', 'advertisement', 
                          'loading', 'spinner', 'emoji', 'gravatar', 'wp-content/plugins',
                          'cover', 'poster', 'thumbnail', 'thumb', 'sidebar', 'widget',
                          'header', 'footer', 'nav', 'menu', 'button', 'social']
         if any(kw in src.lower() for kw in skip_keywords):
             continue
-        
-        # Boyut kontrolu - cok kucuk resimleri atla
         width = img.get('width', '')
         height = img.get('height', '')
         try:
@@ -731,53 +623,33 @@ def scrape_chapter_images(chap_url, session):
                 continue
         except:
             pass
-        
-        # Class'a gore filtrele
         img_class = ' '.join(img.get('class', []))
         if any(kw in img_class.lower() for kw in ['cover', 'thumb', 'avatar', 'logo']):
             continue
-            
         seen.add(src)
         urls.append(src)
-    
     log.info("Bolum resimleri (HTML): %s - %d resim", chap_url.split('/')[-2] if '/' in chap_url else 'unknown', len(urls))
     return urls
 
-# ─── ANA SCRAPE ────────────────────────────────
 def run(source_key, full=True):
-    """
-    full=True → her seri için detay sayfası çek (türler + bölümler kaydedilir)
-    full=False → sadece liste (hızlı, türler boş kalır)
-    """
     cfg  = SOURCES[source_key]
     sess = requests.Session()
     sess.headers.update(HEADERS)
     log.info("=== Scraping: %s (full=%s) ===", source_key, full)
-
-    # Popüler liste — view_count tahmini için sıra önemli
     popular = scrape_list(source_key, cfg["popular"], sess)
     for i, x in enumerate(popular):
         x["est_views"] = max(100000 - i * 300, 100)
-
     time.sleep(DELAY * 2)
-
-    # En yeni liste
     latest = scrape_list(source_key, cfg["latest"], sess)
-
-    # Birleştir — URL'ye göre unique, hem popular hem latest'teki varsa güncelle
     all_items = {x["url"]: x for x in popular}
     for x in latest:
         if x["url"] not in all_items:
-            # Popülerde yoksa view_count düşük ver
             x["est_views"] = 50
             all_items[x["url"]] = x
         else:
-            # Var — son bölüm bilgisini güncelle
             if x.get("latest_chapter"):
                 all_items[x["url"]]["latest_chapter"] = x["latest_chapter"]
-
     log.info("Toplam unique seri: %d", len(all_items))
-
     saved = 0
     for url, item in all_items.items():
         detail = {}
@@ -786,15 +658,11 @@ def run(source_key, full=True):
             detail = scrape_detail(url, sess)
             if detail.get("chapters"):
                 save_chapters(url, detail["chapters"])
-            # Her 10 seride bir log
             if saved % 10 == 0:
                 log.info("  Detay: %d/%d işlendi", saved, len(all_items))
-
-        # genres_raw hem liste sayfasından (ragnar) hem detay sayfasından gelebilir
         list_genres = item.get("genres_raw", [])
         detail_genres = detail.get("raw_genres", [])
         genres = norm_genres(list_genres + detail_genres)
-
         save_series({
             "source":             source_key,
             "slug":               item["slug"],
@@ -813,7 +681,6 @@ def run(source_key, full=True):
             "last_updated":       detail.get("last_updated") or datetime.now().isoformat(),
         })
         saved += 1
-
     c = sqlite3.connect(DB)
     c.execute("INSERT INTO scrape_log(source,status,series_count,message) VALUES(?,?,?,?)",
               (source_key, "ok", saved, f"{saved} seri kaydedildi"))
@@ -823,7 +690,7 @@ def run(source_key, full=True):
 def scrape_all():
     for k in SOURCES:
         try:
-            run(k, full=True)   # ← full=True: türler + bölümler kaydedilir
+            run(k, full=True)
         except Exception as e:
             log.error("Hata (%s): %s", k, e)
         time.sleep(3)
@@ -860,7 +727,7 @@ def trending():
     ct = request.args.get("type","")
     src = request.args.get("source","")
     genre = request.args.get("genre","")
-    limit = min(int(request.args.get("limit",10)),200)  # max 200
+    limit = min(int(request.args.get("limit",10)),200)
     sql = "SELECT * FROM series WHERE 1=1"
     p = []
     if ct:    sql += " AND content_type=?"; p.append(ct)
@@ -874,7 +741,7 @@ def latest():
     ct = request.args.get("type","")
     src = request.args.get("source","")
     genre = request.args.get("genre","")
-    limit = min(int(request.args.get("limit",12)),200)  # max 200
+    limit = min(int(request.args.get("limit",12)),200)
     sql = "SELECT * FROM series WHERE 1=1"
     p = []
     if ct:    sql += " AND content_type=?"; p.append(ct)
@@ -900,20 +767,14 @@ def search():
 
 @app.route("/api/series/<path:slug>")
 def series_detail(slug):
-    """Tek seri detayı + bölüm listesi"""
     data = rows("SELECT * FROM series WHERE slug=? OR url LIKE ?",
                 (slug, f"%{slug}%"))
     if not data:
         return jsonify({"status":"error","message":"Bulunamadı"}), 404
-
     s = data[0]
     series_url = s["url"]
-
-    # DB'de bölümler var mı?
     chaps = rows("SELECT * FROM chapters WHERE series_url=? ORDER BY rowid DESC",
                  (series_url,))
-
-    # DB'de yok — canlı çek
     if not chaps:
         log.info("Bölüm listesi canlı çekiliyor: %s", series_url)
         sess = requests.Session()
@@ -923,7 +784,6 @@ def series_detail(slug):
             save_chapters(series_url, detail["chapters"])
             chaps = rows("SELECT * FROM chapters WHERE series_url=? ORDER BY rowid DESC",
                          (series_url,))
-        # Eksik bilgileri güncelle
         if detail.get("description") and not s.get("description"):
             c = sqlite3.connect(DB)
             c.execute("UPDATE series SET description=?,genres=?,status=? WHERE url=?",
@@ -933,50 +793,34 @@ def series_detail(slug):
                       series_url))
             c.commit(); c.close()
             s["description"] = detail["description"]
-
     s["chapters"] = chaps
     return jsonify({"status":"ok","data":s})
 
 @app.route("/api/chapter/images")
 def chapter_images():
-    """
-    Bölüm resimlerini çek ve URL listesi döndür.
-    ?url=https://golgebahcesi.com/oyuncu-bolum-245/
-    """
     chap_url = request.args.get("url","")
     if not chap_url:
         return jsonify({"status":"error","message":"url parametresi gerekli"}), 400
-
     log.info("Bölüm resimleri çekiliyor: %s", chap_url)
     sess = requests.Session()
     sess.headers.update(HEADERS)
     images = scrape_chapter_images(chap_url, sess)
-
     return jsonify({"status":"ok","count":len(images),"images":images})
 
 @app.route("/api/proxy/image")
 def proxy_image():
-    """
-    Resmi proxy üzerinden sun — CORS sorunu çözer.
-    ?url=https://...resim.jpg
-    Resmi kopyalamaz, sadece iletir.
-    """
     img_url = request.args.get("url","")
     if not img_url or not img_url.startswith("http"):
         return "Geçersiz URL", 400
-
     try:
         proxy_headers = dict(HEADERS)
         proxy_headers["Referer"] = "/".join(img_url.split("/")[:3]) + "/"
-
         r = requests.get(img_url, headers=proxy_headers,
                         stream=True, timeout=15)
         content_type = r.headers.get("Content-Type","image/jpeg")
-
         def generate():
             for chunk in r.iter_content(chunk_size=8192):
                 yield chunk
-
         return Response(
             stream_with_context(generate()),
             content_type=content_type,
@@ -1063,7 +907,6 @@ def gen_token():   return secrets.token_hex(32)
 ROLES = ["Yeni","Deneyimli","Uzman","Efsane","Admin"]
 
 def auto_role(completed):
-    """Tamamlanan seri sayısına göre otomatik rol — Admin kazanılamaz, Efsane max"""
     if completed >= 50: return "Efsane"
     if completed >= 20: return "Uzman"
     if completed >= 5:  return "Deneyimli"
@@ -1085,7 +928,6 @@ def safe_user(u):
     if not u: return None
     d = dict(u)
     d.pop("password_hash", None)
-    # roles_earned JSON parse
     if "roles_earned" in d:
         try: d["roles_earned"] = json.loads(d["roles_earned"])
         except: d["roles_earned"] = ["Yeni"]
@@ -1209,7 +1051,6 @@ def save_progress():
     ser_title   = d.get("series_title","")
     ser_cover   = d.get("series_cover","")
     if not series_url: return jsonify({"status":"error"}),400
-
     c = sqlite3.connect(DB)
     c.execute("""INSERT INTO user_progress
                  (user_id,series_url,series_title,series_cover,last_chapter_url,last_chapter_num,status,updated_at)
@@ -1222,34 +1063,24 @@ def save_progress():
                  status=excluded.status,
                  updated_at=datetime('now')""",
               (user["id"],series_url,ser_title,ser_cover,chap_url,chap_num,status))
-
-    # Sayıları güncelle
     completed = c.execute("SELECT COUNT(*) FROM user_progress WHERE user_id=? AND status='completed'",(user["id"],)).fetchone()[0]
     reading   = c.execute("SELECT COUNT(*) FROM user_progress WHERE user_id=? AND status='reading'",(user["id"],)).fetchone()[0]
-    cur_role  = c.execute("SELECT role,roles_earned FROM users WHERE id=?",(user["id"],)).fetchone()
+    cur_role = c.execute("SELECT role,roles_earned FROM users WHERE id=?",(user["id"],)).fetchone()
     cur_main_role = cur_role[0] if cur_role else "Yeni"
     cur_earned = cur_role[1] if cur_role else '["Yeni"]'
-
-    # Admin rolü değişmez — sadece Yeni/Deneyimli/Uzman/Efsane arasında geçiş
     if cur_main_role != "Admin":
         new_role = auto_role(completed)
-
-        # Kazanılan rolleri listesi (birikimli, alt alta)
         try:
             earned_list = json.loads(cur_earned)
         except:
             earned_list = ["Yeni"]
-
-        # Yeni rol kazanıldıysa listeye ekle
         if new_role not in earned_list:
             earned_list.append(new_role)
-
         c.execute("UPDATE users SET completed_count=?,reading_count=?,role=?,roles_earned=? WHERE id=?",
                   (completed, reading, new_role, json.dumps(earned_list, ensure_ascii=False), user["id"]))
     else:
         c.execute("UPDATE users SET completed_count=?,reading_count=? WHERE id=?",
                   (completed, reading, user["id"]))
-
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
@@ -1272,14 +1103,12 @@ def update_profile():
     try:
         c.execute(f"UPDATE users SET {','.join(updates)} WHERE id=?", params)
     except Exception as e:
-        # username unique hatası
         c.execute("UPDATE users SET bio=? WHERE id=?", (bio, user["id"]))
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
 @app.route("/api/user/avatar", methods=["POST"])
 def upload_avatar():
-    """Avatar URL kaydet (base64 veya harici URL)"""
     token = request.headers.get("Authorization","").replace("Bearer ","")
     user  = get_user_by_token(token)
     if not user: return jsonify({"status":"error","message":"Giriş gerekli"}),401
@@ -1287,7 +1116,6 @@ def upload_avatar():
     avatar_url = d.get("avatar_url","")
     if not avatar_url:
         return jsonify({"status":"error","message":"URL gerekli"}),400
-    # Maksimum 500KB base64 sınırı
     if len(avatar_url) > 700000:
         return jsonify({"status":"error","message":"Resim çok büyük (max 500KB)"}),400
     c = sqlite3.connect(DB)
@@ -1372,17 +1200,20 @@ def save_settings():
         c.execute("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,datetime('now')) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=datetime('now')",(key,str(val)))
     c.commit(); c.close()
     return jsonify({"status":"ok"})
-    
-    @app.route("/api/upload-db", methods=["POST"])
+
+# ─── DOSYA YÜKLEME ENDPOINT'İ (YENİ) ───────────
+@app.route("/api/upload-db", methods=["POST"])
 def upload_db():
-    import os
     data = request.get_data()
     if not data:
         return jsonify({"status":"error","message":"Dosya boş"}), 400
-    with open("voidscans.db", "wb") as f:
-        f.write(data)
-    return jsonify({"status":"ok","message":"Veritabanı yüklendi, yeniden başlatılıyor..."})
-    
+    try:
+        with open("voidscans.db", "wb") as f:
+            f.write(data)
+        return jsonify({"status":"ok","message":"Veritabanı yüklendi, yeniden başlatılıyor..."})
+    except Exception as e:
+        return jsonify({"status":"error","message":str(e)}), 500
+
 if __name__ == "__main__":
     init_db()
     Thread(target=scheduler, daemon=True).start()
