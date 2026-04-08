@@ -1372,6 +1372,17 @@ def save_settings():
         c.execute("INSERT INTO site_settings(key,value,updated_at) VALUES(?,?,datetime('now')) ON CONFLICT(key) DO UPDATE SET value=excluded.value,updated_at=datetime('now')",(key,str(val)))
     c.commit(); c.close()
     return jsonify({"status":"ok"})
+    
+    @app.route("/api/upload-db", methods=["POST"])
+def upload_db():
+    import os
+    data = request.get_data()
+    if not data:
+        return jsonify({"status":"error","message":"Dosya boş"}), 400
+    with open("voidscans.db", "wb") as f:
+        f.write(data)
+    return jsonify({"status":"ok","message":"Veritabanı yüklendi, yeniden başlatılıyor..."})
+    
 if __name__ == "__main__":
     init_db()
     Thread(target=scheduler, daemon=True).start()
