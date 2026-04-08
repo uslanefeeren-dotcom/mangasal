@@ -1202,17 +1202,6 @@ def save_settings():
     return jsonify({"status":"ok"})
 
 # ─── DOSYA YÜKLEME ENDPOINT'İ (YENİ) ───────────
-@app.route("/api/upload-db", methods=["POST"])
-def upload_db():
-    data = request.get_data()
-    if not data:
-        return jsonify({"status":"error","message":"Dosya boş"}), 400
-    try:
-        with open("voidscans.db", "wb") as f:
-            f.write(data)
-        return jsonify({"status":"ok","message":"Veritabanı yüklendi, yeniden başlatılıyor..."})
-    except Exception as e:
-        return jsonify({"status":"error","message":str(e)}), 500
 
 if __name__ == "__main__":
     init_db()
