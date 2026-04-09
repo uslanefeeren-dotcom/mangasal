@@ -382,8 +382,7 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
                 <th>Kapak</th><th>Başlık</th><th>Tür</th><th>Kaynak</th>
                 <th>Bölüm</th><th>Durum</th><th>Türler</th><th>İşlem</th>
               </tr></thead>
-              <tbody id="serBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
-              </tbody>
+              <tbody id="serBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...络客</tbody>
             </table>
           </div>
           <div class="tbl-footer">
@@ -408,8 +407,7 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
                 <th>ID</th><th>Kullanıcı Adı</th><th>E-posta</th><th>Rol</th>
                 <th>Tamamlanan</th><th>Okuyulan</th><th>Durum</th><th>Kayıt</th><th>İşlem</th>
               </tr></thead>
-              <tbody id="userBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
-              </tbody>
+              <tbody id="userBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...络客</tbody>
             </table>
           </div>
           <div class="tbl-footer">
@@ -541,8 +539,7 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
           <div style="overflow-x:auto">
             <table class="tbl">
               <thead><tr><th>Zaman</th><th>Kaynak</th><th>Durum</th><th>Seri</th><th>Mesaj</th></tr></thead>
-              <tbody id="logBody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
-              </tbody>
+              <tbody id="logBody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...络客</tbody>
             </table>
           </div>
         </div>
@@ -643,9 +640,9 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== DÜZELTİLMİŞ API BAĞLANTISI ==========
+// ========== DÜZELTİLEN KISIM: API sabiti eklendi ==========
 const API = '/api';
-// ================================================
+// ===========================================================
 
 const PWD_KEY = 'vs_admin_pwd';
 const DEF_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
@@ -731,9 +728,11 @@ async function loadDashboard(){
   document.getElementById('dChaps').textContent=d.total_chapters>999?(d.total_chapters/1000).toFixed(1)+'K':(d.total_chapters||0);
   document.getElementById('dManhwa').textContent=d.manhwa||0;
 
+  // Kullanıcı sayısı
   const users=await apiFetch('/admin/users?limit=1');
   document.getElementById('dUsers').textContent=users?.total||'—';
 
+  // Kaynak istatistikleri
   const gb=await apiFetch('/search?source=golgebahcesi&limit=1');
   const rg=await apiFetch('/search?source=ragnarscans&limit=1');
   const gbN=gb?.count||0, rgN=rg?.count||0, total=(gbN+rgN)||1;
@@ -808,11 +807,11 @@ function clearLog(){document.getElementById('liveLog').innerHTML='<div class="ll
 let serData=[],serPage=1;const PG=20;
 async function loadSeries(src='',type=''){
   const tbody=document.getElementById('serBody');
-  tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span></td></tr>';
+  tbody.innerHTML='<td><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span>络客</tbody>';
   const p=new URLSearchParams({limit:500});
   if(src) p.set('source',src);if(type)p.set('type',type);
   const data=await apiFetch('/trending?'+p);
-  if(!data||!data.data){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Veri alınamadı</td></tr>';return;}
+  if(!data||!data.data){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Veri alınamadı络客</tbody>';return;}
   serData=data.data; serPage=1;
   document.getElementById('serSearch').value='';
   document.getElementById('serSub').textContent=serData.length+' seri'+(src?' — '+src:'')+(type?' — '+type:'');
@@ -826,7 +825,7 @@ function renderSeries(data){
   const total=data.length,pages=Math.ceil(total/PG),start=(serPage-1)*PG;
   const slice=data.slice(start,start+PG);
   const tbody=document.getElementById('serBody');
-  if(!slice.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Bulunamadı</td></tr>';return;}
+  if(!slice.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Bulunamadı络客</tbody>';return;}
   tbody.innerHTML=slice.map(s=>{
     const tc=(s.content_type||'manhwa').toLowerCase();
     const src=s.source==='golgebahcesi'?'Gölge B.':'Ragnar';
@@ -886,9 +885,9 @@ function closeSeriesModal(){document.getElementById('seriesModal').classList.rem
 let userData=[],userPage=1;
 async function loadUsers(){
   const tbody=document.getElementById('userBody');
-  tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span></td></tr>';
+  tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span>络客</tbody>';
   const data=await apiFetch('/admin/users?limit=200');
-  if(!data||!data.data){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Veri alınamadı</td></tr>';return;}
+  if(!data||!data.data){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Veri alınamadı络客</tbody>';return;}
   userData=data.data; userPage=1;
   document.getElementById('userSub').textContent=(data.total||0)+' kullanıcı';
   renderUsers(userData);
@@ -901,7 +900,7 @@ function renderUsers(data){
   const total=data.length,pages=Math.ceil(total/PG),start=(userPage-1)*PG;
   const slice=data.slice(start,start+PG);
   const tbody=document.getElementById('userBody');
-  if(!slice.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Bulunamadı</td></tr>';return;}
+  if(!slice.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Bulunamadı络客</tbody>';return;}
   tbody.innerHTML=slice.map(u=>`<tr>
     <td style="font-size:11px;color:var(--muted)">${u.id}</td>
     <td style="font-weight:700;color:#fff">${u.username}</td>
@@ -963,10 +962,13 @@ async function loadAppearance(){
   document.getElementById('primaryColor').value=d.primary_color||'#d4500a';
   document.getElementById('bgColorHex').value=d.bg_color||'#0d0805';
   document.getElementById('bgColor').value=d.bg_color||'#0d0805';
+  // Logo önizleme
   if(d.site_logo){
     document.getElementById('logoPreview').innerHTML=`<img src="${d.site_logo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
   }
+  // İsim önizleme
   updateNamePreview();
+  // Event listeners
   document.getElementById('primaryColor').oninput=e=>{document.getElementById('primaryColorHex').value=e.target.value;};
   document.getElementById('bgColor').oninput=e=>{document.getElementById('bgColorHex').value=e.target.value;};
   document.getElementById('nameColor').oninput=e=>{document.getElementById('nameColorHex').value=e.target.value;updateNamePreview();};
@@ -1061,9 +1063,9 @@ async function saveBanners(){
 // ── LOGLAR ───────────────────────────────────
 async function loadLogs(){
   const tbody=document.getElementById('logBody');
-  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span></td></tr>';
+  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)"><span class="spin"></span>络客</tbody>';
   const data=await apiFetch('/logs?limit=50');
-  if(!data||!data.data||!data.data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Log bulunamadı</td></tr>';return;}
+  if(!data||!data.data||!data.data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Log bulunamadı络客</tbody>';return;}
   tbody.innerHTML=data.data.map(l=>`<tr>
     <td style="font-size:10px;color:var(--muted);white-space:nowrap">${fmtTime(l.created_at)}</td>
     <td style="font-weight:700">${l.source||'—'}</td>
