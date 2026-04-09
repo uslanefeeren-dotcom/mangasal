@@ -1,16 +1,11 @@
 """
-VoidScans Scraper v4 — TAM OKUMA DESTEĞİ
-==========================================
-- Seri listesi çeker
-- Bölüm listesi çeker  
-- Bölüm resimlerini proxy ile sunar (kopyalamaz, yönlendirir)
-Çalıştırma: python scraper.py
-API: http://localhost:5000
+Mangasal Scraper v5 — ÇALIŞAN SON SÜRÜM
 """
-
 import sqlite3, json, time, re, logging, os
 from datetime import datetime
 from threading import Thread
+from functools import wraps
+import hashlib, secrets
 
 import requests
 from bs4 import BeautifulSoup
@@ -45,7 +40,7 @@ INTERVAL = 2
 DELAY    = 1.0
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-log = logging.getLogger("VoidScans")
+log = logging.getLogger("Mangasal")
 
 # ─── TÜR NORMALİZASYON ─────────────────────────
 GENRE_MAP = {
@@ -175,7 +170,6 @@ def init_db():
     CREATE INDEX IF NOT EXISTS idx_progress ON user_progress(user_id);
     CREATE INDEX IF NOT EXISTS idx_favs     ON favorites(user_id);
     """)
-    # Varsayılan site ayarları
     defaults = [
         ('site_name', 'Mangasal'),
         ('site_name_part1', 'MANGA'),
@@ -193,6 +187,22 @@ def init_db():
         c.execute("INSERT OR IGNORE INTO site_settings(key,value) VALUES(?,?)", (k,v))
     c.commit(); c.close()
     log.info("Veritabanı hazır: %s", DB)
+
+# ─── VERİTABANI FONKSİYONLARI ──────────────────
+def rows(sql, params=()):
+    c = sqlite3.connect(DB)
+    cur = c.cursor()
+    cur.execute(sql, params)
+    cols = [d[0] for d in cur.description]
+    out = []
+    for row in cur.fetchall():
+        d = dict(zip(cols, row))
+        if "genres" in d:
+            try: d["genres"] = json.loads(d["genres"])
+            except: d["genres"] = []
+        out.append(d)
+    c.close()
+    return out
 
 def save_series(data):
     c = sqlite3.connect(DB)
@@ -243,7 +253,6 @@ def get_page(url, session):
         return None
 
 def parse_bsx(card, base_url=""):
-    """Gölge Bahçesi / AduManga — .bsx kart yapısı"""
     a = card.select_one("a")
     if not a: return None
     url   = a.get("href","")
@@ -252,26 +261,22 @@ def parse_bsx(card, base_url=""):
         tt = a.select_one(".tt")
         title = tt.get_text(strip=True) if tt else ""
     if not title or not url: return None
-
     if url.startswith("../"):
         url = base_url + "/" + url.lstrip("../")
     elif url.startswith("/") and not url.startswith("//"):
         url = base_url + url
     elif not url.startswith("http"):
         url = base_url + "/" + url.lstrip("/")
-
     skip_words = ["duyuru", "announcement", "kapanış", "açılış", "haber",
                   "site ", "discord", "sponsor", "reklam", "bilgi"]
     if any(w in title.lower() for w in skip_words):
         return None
-
     img = a.select_one("img")
     cover = ""
     if img:
         cover = img.get("data-src") or img.get("data-lazy-src") or img.get("src") or ""
     if cover and cover.startswith("/") and not cover.startswith("//"):
         cover = base_url + cover
-
     type_span = a.select_one("span.type")
     content_type = "Manhwa"
     if type_span:
@@ -279,50 +284,39 @@ def parse_bsx(card, base_url=""):
             if cls.lower() != "type":
                 content_type = cls.strip().title()
                 break
-
     ep_el = a.select_one(".epxs")
     latest = ep_el.get_text(strip=True) if ep_el else ""
-
     rating = 0.0
     sc = a.select_one(".numscore")
     if sc:
         try: rating = float(sc.get_text(strip=True).replace(",","."))
         except: pass
-
     return dict(url=url, slug=url.rstrip("/").split("/")[-1],
                 title=title, cover=cover, content_type=content_type,
                 latest_chapter=latest, rating=rating)
 
 def parse_ragnar(card):
-    """Ragnar Scans — .manga-card kart yapısı (UIkit teması)"""
     a = card.select_one("a")
     if not a: return None
     url   = a.get("href","")
     if not url: return None
-
     title_el = card.select_one(".manga-overlay-title")
     title = title_el.get_text(strip=True) if title_el else ""
     if not title:
         title = a.get("title","") or ""
     if not title: return None
-
     img = card.select_one("img")
     cover = ""
     if img:
-        cover = (img.get("data-src") or img.get("data-lazy-src") or
-                 img.get("src") or "")
-
+        cover = (img.get("data-src") or img.get("data-lazy-src") or img.get("src") or "")
     content_type = "Manhwa"
     genre_el = card.select_one(".manga-overlay-genres, .slider-genres")
     genres_raw = []
     if genre_el:
         genres_raw = [g.strip() for g in genre_el.get_text().split("·") if g.strip()]
-
     status_el = card.select_one(".manga-status-badge, .manga-status-ribbon")
     status = status_el.get_text(strip=True) if status_el else "Devam Ediyor"
-
     slug = "rg-" + url.rstrip("/").split("/")[-1]
-
     return dict(url=url, slug=slug, title=title, cover=cover,
                 content_type=content_type, latest_chapter="",
                 rating=0.0, genres_raw=genres_raw, status=status)
@@ -332,7 +326,6 @@ def scrape_list(source_key, url, session):
     page_url_tpl = SOURCES[source_key].get("page_url", None)
     items, page = [], 1
     empty_streak = 0
-
     while page <= 100:
         if page_url_tpl and page > 1:
             purl = page_url_tpl.format(page=page)
@@ -341,21 +334,17 @@ def scrape_list(source_key, url, session):
         else:
             sep  = "&" if "?" in url else "?"
             purl = f"{url}{sep}page={page}"
-
         r    = get_page(purl, session)
         if not r:
             empty_streak += 1
             if empty_streak >= 3: break
             page += 1
             continue
-
         soup = BeautifulSoup(r.text, "html.parser")
-
         if parser_type == "ragnar":
             cards = soup.select(".manga-card")
         else:
             cards = soup.select(".bsx") or soup.select(".bs")
-
         if not cards:
             empty_streak += 1
             log.info("  %s sayfa %d: kart yok (%d/2)", source_key, page, empty_streak)
@@ -363,7 +352,6 @@ def scrape_list(source_key, url, session):
             page += 1
             time.sleep(DELAY)
             continue
-
         empty_streak = 0
         base_url = SOURCES[source_key]["base"]
         for card in cards:
@@ -372,21 +360,15 @@ def scrape_list(source_key, url, session):
             else:
                 item = parse_bsx(card, base_url)
             if item: items.append(item)
-
         log.info("  %s sayfa %d → %d kart (toplam: %d)", source_key, page, len(cards), len(items))
-
         if parser_type == "ragnar":
             has_next = bool(soup.find("link", rel="next"))
-            if not has_next:
-                break
+            if not has_next: break
         else:
             next_btn = soup.select_one("a.next, .nextpostslink, a[rel='next'], a.next.page-numbers, .nav-previous a")
-            if not next_btn:
-                break
-
+            if not next_btn: break
         page += 1
         time.sleep(DELAY)
-
     return items
 
 def scrape_detail(url, session):
@@ -395,19 +377,16 @@ def scrape_detail(url, session):
     if not r: return {}
     r.encoding = r.apparent_encoding or 'utf-8'
     soup = BeautifulSoup(r.text, "html.parser")
-
     desc_el = (soup.select_one(".entry-content") or
                soup.select_one(".synops") or
                soup.select_one(".summary__content") or
                soup.select_one(".description-summary"))
     desc = desc_el.get_text(" ", strip=True)[:500] if desc_el else ""
-
     status = "Devam Ediyor"
     for el in soup.select(".tsinfo .imptdt, .infox .fmed, .imptdt, .post-status .summary-content"):
         t = el.get_text(strip=True).lower()
         if "completed" in t or "tamamlandı" in t: status="Tamamlandı"; break
         if "hiatus" in t or "durduruldu" in t:    status="Durduruldu"; break
-
     genre_els = (soup.select(".mgen a") or
                  soup.select(".genres-content a") or
                  soup.select("a[href*='/genres/']") or
@@ -416,21 +395,17 @@ def scrape_detail(url, session):
                  soup.select(".manga-genres a") or
                  soup.select(".genre-list a"))
     raw_genres = [g.get_text(strip=True) for g in genre_els]
-
     if not raw_genres:
         genre_el = soup.select_one(".manga-genres, .genres, .series-genres")
         if genre_el:
             raw_genres = [g.strip() for g in genre_el.get_text().split("·") if g.strip()]
-
     chapters = []
     from urllib.parse import urljoin
     base_url = "/".join(url.split("/")[:3])
-
     def fix_url(u):
         if not u: return u
         if u.startswith("http"): return u
         return urljoin(url, u)
-
     ragnar_chaps = soup.select(".chapter-list a.uk-link-toggle, .chapter-list a")
     if ragnar_chaps:
         for a in ragnar_chaps:
@@ -442,10 +417,8 @@ def scrape_detail(url, session):
             if not num_text: continue
             date_el = a.select_one("time, .uk-article-meta span:last-child")
             date = date_el.get("datetime","") or date_el.get_text(strip=True) if date_el else ""
-            chapters.append({"num": num_text, "title": num_text,
-                             "url": chap_url, "date": date})
+            chapters.append({"num": num_text, "title": num_text, "url": chap_url, "date": date})
         log.info("Ragnar direkt: %d bölüm — %s", len(chapters), url.split("/")[-2])
-
     if not chapters:
         chapter_items = soup.select("#chapterlist li, .eplister li")
         for li in chapter_items:
@@ -457,9 +430,7 @@ def scrape_detail(url, session):
             date_el = a.select_one(".chapterdate")
             num_text = html_module.unescape(num_el.get_text(strip=True) if num_el else li.get("data-num",""))
             date = date_el.get_text(strip=True) if date_el else ""
-            chapters.append({"num": num_text, "title": num_text,
-                             "url": chap_url, "date": date})
-
+            chapters.append({"num": num_text, "title": num_text, "url": chap_url, "date": date})
     if not chapters:
         chapter_items = soup.select(".wp-manga-chapter, .listing-chapters_wrap li")
         for li in chapter_items:
@@ -470,9 +441,7 @@ def scrape_detail(url, session):
             num_text = a.get_text(strip=True)
             date_el = li.select_one(".chapter-release-date i, .chapter-release-date")
             date = date_el.get_text(strip=True) if date_el else ""
-            chapters.append({"num": num_text, "title": num_text,
-                             "url": chap_url, "date": date})
-
+            chapters.append({"num": num_text, "title": num_text, "url": chap_url, "date": date})
     if not chapters:
         post_id = ""
         for pattern in [
@@ -484,7 +453,6 @@ def scrape_detail(url, session):
         ]:
             m = re.search(pattern, r.text)
             if m: post_id = m.group(1); break
-
         if post_id:
             log.info("AJAX bölüm çekme: post_id=%s", post_id)
             try:
@@ -512,12 +480,10 @@ def scrape_detail(url, session):
                         date_el = a.select_one(".chapterdate, .chapter-release-date i")
                         num_text = html_module.unescape(num_el.get_text(strip=True) if num_el else a.get_text(strip=True))
                         date = date_el.get_text(strip=True) if date_el else ""
-                        chapters.append({"num": num_text, "title": num_text,
-                                         "url": chap_url, "date": date})
+                        chapters.append({"num": num_text, "title": num_text, "url": chap_url, "date": date})
                     log.info("AJAX: %d bölüm", len(chapters))
             except Exception as e:
                 log.warning("AJAX hatası: %s", e)
-
     log.info("Toplam bölüm: %d — %s", len(chapters), url.split("/")[-2])
     return dict(description=desc, status=status, raw_genres=raw_genres,
                 chapter_count=len(chapters), chapters=chapters,
@@ -529,10 +495,8 @@ def scrape_chapter_images(chap_url, session):
     r.encoding = r.apparent_encoding or 'utf-8'
     html_text = r.text
     soup = BeautifulSoup(html_text, "html.parser")
-    
     urls = []
     seen = set()
-
     if 'ts_reader.run' in html_text:
         try:
             start_idx = html_text.find('ts_reader.run(')
@@ -561,51 +525,36 @@ def scrape_chapter_images(chap_url, session):
                     return urls
         except Exception as e:
             log.debug("ts_reader parse hatası: %s", e)
-
     selectors = [
-        "#readerarea img",
-        ".readerarea img", 
-        ".reading-content img",
-        ".chapter-content img",
-        ".page-break img",
-        "div.chapter-c img",
-        "div[class*='reader'] img",
-        ".entry-content .separator img",
+        "#readerarea img", ".readerarea img", ".reading-content img",
+        ".chapter-content img", ".page-break img", "div.chapter-c img",
+        "div[class*='reader'] img", ".entry-content .separator img",
     ]
-    
     imgs = []
     for sel in selectors:
         found = soup.select(sel)
         if found and len(found) > len(imgs):
             imgs = found
-    
     if not imgs or len(imgs) < 2:
         main_content = soup.select_one('article, main, .content, #content, .post-body')
         if main_content:
             imgs = main_content.select('img')
         else:
             imgs = soup.select('img')
-    
     for img in imgs:
-        src = (img.get("data-src") or 
-               img.get("data-lazy-src") or 
-               img.get("data-original") or
-               img.get("data-cfsrc") or
-               img.get("data-pagespeed-lazy-src") or
-               img.get("src") or "")
-        
+        src = (img.get("data-src") or img.get("data-lazy-src") or
+               img.get("data-original") or img.get("data-cfsrc") or
+               img.get("data-pagespeed-lazy-src") or img.get("src") or "")
         if not src or not src.startswith("http"):
             continue
         if src in seen:
             continue
-        
-        skip_keywords = ['logo', 'icon', 'avatar', 'banner', 'ads', 'advertisement', 
+        skip_keywords = ['logo', 'icon', 'avatar', 'banner', 'ads', 'advertisement',
                          'loading', 'spinner', 'emoji', 'gravatar', 'wp-content/plugins',
                          'cover', 'poster', 'thumbnail', 'thumb', 'sidebar', 'widget',
                          'header', 'footer', 'nav', 'menu', 'button', 'social']
         if any(kw in src.lower() for kw in skip_keywords):
             continue
-        
         width = img.get('width', '')
         height = img.get('height', '')
         try:
@@ -615,14 +564,11 @@ def scrape_chapter_images(chap_url, session):
                 continue
         except:
             pass
-        
         img_class = ' '.join(img.get('class', []))
         if any(kw in img_class.lower() for kw in ['cover', 'thumb', 'avatar', 'logo']):
             continue
-            
         seen.add(src)
         urls.append(src)
-    
     log.info("Bolum resimleri (HTML): %s - %d resim", chap_url.split('/')[-2] if '/' in chap_url else 'unknown', len(urls))
     return urls
 
@@ -632,15 +578,11 @@ def run(source_key, full=True):
     sess = requests.Session()
     sess.headers.update(HEADERS)
     log.info("=== Scraping: %s (full=%s) ===", source_key, full)
-
     popular = scrape_list(source_key, cfg["popular"], sess)
     for i, x in enumerate(popular):
         x["est_views"] = max(100000 - i * 300, 100)
-
     time.sleep(DELAY * 2)
-
     latest = scrape_list(source_key, cfg["latest"], sess)
-
     all_items = {x["url"]: x for x in popular}
     for x in latest:
         if x["url"] not in all_items:
@@ -649,9 +591,7 @@ def run(source_key, full=True):
         else:
             if x.get("latest_chapter"):
                 all_items[x["url"]]["latest_chapter"] = x["latest_chapter"]
-
     log.info("Toplam unique seri: %d", len(all_items))
-
     saved = 0
     for url, item in all_items.items():
         detail = {}
@@ -662,11 +602,9 @@ def run(source_key, full=True):
                 save_chapters(url, detail["chapters"])
             if saved % 10 == 0:
                 log.info("  Detay: %d/%d işlendi", saved, len(all_items))
-
         list_genres = item.get("genres_raw", [])
         detail_genres = detail.get("raw_genres", [])
         genres = norm_genres(list_genres + detail_genres)
-
         save_series({
             "source":             source_key,
             "slug":               item["slug"],
@@ -685,7 +623,6 @@ def run(source_key, full=True):
             "last_updated":       detail.get("last_updated") or datetime.now().isoformat(),
         })
         saved += 1
-
     c = sqlite3.connect(DB)
     c.execute("INSERT INTO scrape_log(source,status,series_count,message) VALUES(?,?,?,?)",
               (source_key, "ok", saved, f"{saved} seri kaydedildi"))
@@ -712,32 +649,17 @@ CORS(app)
 init_db()
 Thread(target=scheduler, daemon=True).start()
 
-def rows(sql, params=()):
-    c = sqlite3.connect(DB)
-    cur = c.cursor()
-    cur.execute(sql, params)
-    cols = [d[0] for d in cur.description]
-    out = []
-    for row in cur.fetchall():
-        d = dict(zip(cols, row))
-        if "genres" in d:
-            try: d["genres"] = json.loads(d["genres"])
-            except: d["genres"] = []
-        out.append(d)
-    c.close()
-    return out
-
-# ─── STATİK DOSYALAR ──────────────────────────
+# STATİK DOSYALAR
 @app.route('/')
 def home():
     return send_from_directory('.', 'index.html')
 
 @app.route('/reader.html')
-def reader():
+def reader_page():
     return send_from_directory('.', 'reader.html')
 
 @app.route('/admin.html')
-def admin():
+def admin_page():
     return send_from_directory('.', 'admin.html')
 
 # API ROUTES
@@ -790,13 +712,10 @@ def series_detail(slug):
                 (slug, f"%{slug}%"))
     if not data:
         return jsonify({"status":"error","message":"Bulunamadı"}), 404
-
     s = data[0]
     series_url = s["url"]
-
     chaps = rows("SELECT * FROM chapters WHERE series_url=? ORDER BY rowid DESC",
                  (series_url,))
-
     if not chaps:
         log.info("Bölüm listesi canlı çekiliyor: %s", series_url)
         sess = requests.Session()
@@ -815,7 +734,6 @@ def series_detail(slug):
                       series_url))
             c.commit(); c.close()
             s["description"] = detail["description"]
-
     s["chapters"] = chaps
     return jsonify({"status":"ok","data":s})
 
@@ -824,12 +742,10 @@ def chapter_images():
     chap_url = request.args.get("url","")
     if not chap_url:
         return jsonify({"status":"error","message":"url parametresi gerekli"}), 400
-
     log.info("Bölüm resimleri çekiliyor: %s", chap_url)
     sess = requests.Session()
     sess.headers.update(HEADERS)
     images = scrape_chapter_images(chap_url, sess)
-
     return jsonify({"status":"ok","count":len(images),"images":images})
 
 @app.route("/api/proxy/image")
@@ -837,24 +753,16 @@ def proxy_image():
     img_url = request.args.get("url","")
     if not img_url or not img_url.startswith("http"):
         return "Geçersiz URL", 400
-
     try:
         proxy_headers = dict(HEADERS)
         proxy_headers["Referer"] = "/".join(img_url.split("/")[:3]) + "/"
-
-        r = requests.get(img_url, headers=proxy_headers,
-                        stream=True, timeout=15)
+        r = requests.get(img_url, headers=proxy_headers, stream=True, timeout=15)
         content_type = r.headers.get("Content-Type","image/jpeg")
-
         def generate():
             for chunk in r.iter_content(chunk_size=8192):
                 yield chunk
-
-        return Response(
-            stream_with_context(generate()),
-            content_type=content_type,
-            headers={"Cache-Control": "public, max-age=3600"}
-        )
+        return Response(stream_with_context(generate()), content_type=content_type,
+                       headers={"Cache-Control": "public, max-age=3600"})
     except Exception as e:
         log.error("Proxy hatası: %s", e)
         return "Resim yüklenemedi", 502
@@ -926,20 +834,9 @@ def clear_db():
     c.close()
     return jsonify({"status":"ok","message":"Veritabanı temizlendi"})
 
-# ─── KULLANICI SİSTEMİ ─────────────────────────
-import hashlib, secrets
-from functools import wraps
-
+# ─── KULLANICI SİSTEMİ (kısa) ──────────────────
 def hash_pwd(pwd): return hashlib.sha256(pwd.encode()).hexdigest()
 def gen_token():   return secrets.token_hex(32)
-
-ROLES = ["Yeni","Deneyimli","Uzman","Efsane","Admin"]
-
-def auto_role(completed):
-    if completed >= 50: return "Efsane"
-    if completed >= 20: return "Uzman"
-    if completed >= 5:  return "Deneyimli"
-    return "Yeni"
 
 def get_user_by_token(token):
     if not token: return None
@@ -1080,7 +977,6 @@ def save_progress():
     ser_title   = d.get("series_title","")
     ser_cover   = d.get("series_cover","")
     if not series_url: return jsonify({"status":"error"}),400
-
     c = sqlite3.connect(DB)
     c.execute("""INSERT INTO user_progress
                  (user_id,series_url,series_title,series_cover,last_chapter_url,last_chapter_num,status,updated_at)
@@ -1093,19 +989,16 @@ def save_progress():
                  status=excluded.status,
                  updated_at=datetime('now')""",
               (user["id"],series_url,ser_title,ser_cover,chap_url,chap_num,status))
-
     completed = c.execute("SELECT COUNT(*) FROM user_progress WHERE user_id=? AND status='completed'",(user["id"],)).fetchone()[0]
     reading   = c.execute("SELECT COUNT(*) FROM user_progress WHERE user_id=? AND status='reading'",(user["id"],)).fetchone()[0]
     cur_role  = c.execute("SELECT role,roles_earned FROM users WHERE id=?",(user["id"],)).fetchone()
     cur_main_role = cur_role[0] if cur_role else "Yeni"
     cur_earned = cur_role[1] if cur_role else '["Yeni"]'
-
     if cur_main_role != "Admin":
+        def auto_role(c): return "Efsane" if c>=50 else "Uzman" if c>=20 else "Deneyimli" if c>=5 else "Yeni"
         new_role = auto_role(completed)
-        try:
-            earned_list = json.loads(cur_earned)
-        except:
-            earned_list = ["Yeni"]
+        try: earned_list = json.loads(cur_earned)
+        except: earned_list = ["Yeni"]
         if new_role not in earned_list:
             earned_list.append(new_role)
         c.execute("UPDATE users SET completed_count=?,reading_count=?,role=?,roles_earned=? WHERE id=?",
@@ -1113,7 +1006,6 @@ def save_progress():
     else:
         c.execute("UPDATE users SET completed_count=?,reading_count=? WHERE id=?",
                   (completed, reading, user["id"]))
-
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
@@ -1156,7 +1048,7 @@ def upload_avatar():
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
-# ─── ADMIN API ─────────────────────────────────
+# ADMIN API (kısa)
 @app.route("/api/admin/users")
 @require_admin
 def admin_users():
@@ -1213,7 +1105,6 @@ def admin_update_series():
     c.close()
     return jsonify({"status":"ok"})
 
-# ─── SİTE AYARLARI ─────────────────────────────
 @app.route("/api/settings")
 def get_settings():
     c = sqlite3.connect(DB); cur = c.cursor()
@@ -1234,7 +1125,6 @@ def save_settings():
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
-# ─── DOSYA YÜKLEME ENDPOINT'i ────────────────
 @app.route('/api/upload-db', methods=['POST'])
 def upload_db():
     data = request.get_data()
