@@ -7,51 +7,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --red:#d4500a;--gold:#e87c1e;
-  --dark:#0d0805;--card:#150e08;
-  --text:#e0e0e0;--muted:#888;
-  --bdr:rgba(212,80,10,.15)
-}
+:root{--red:#d4500a;--gold:#e87c1e;--dark:#0d0805;--card:#150e08;--text:#e0e0e0;--muted:#888;--bdr:rgba(212,80,10,.15)}
 body{background:var(--dark);color:var(--text);font-family:'Mulish',sans-serif;min-height:100vh}
-
-/* SCROLLBAR */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:#0d0805}
 ::-webkit-scrollbar-thumb{background:#6b2800;border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--red)}
-
-/* NAV */
-nav{display:flex;align-items:center;gap:0;padding:0 48px;height:62px;background:rgba(13,8,5,.97);
-  backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;border-bottom:1px solid var(--bdr)}
+nav{display:flex;align-items:center;gap:0;padding:0 48px;height:62px;background:rgba(13,8,5,.97);backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;border-bottom:1px solid var(--bdr)}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;margin-right:28px}
 .nav-logo span{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#fff}
 .nav-logo span em{color:var(--red);font-style:normal}
 nav ul{display:flex;gap:24px;list-style:none;flex:1}
-nav ul a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;transition:.2s;cursor:pointer}
+nav ul a{color:var(--muted);text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:.2s;cursor:pointer}
 nav ul a:hover,nav ul a.active{color:#fff}
 .nav-right{display:flex;align-items:center;gap:12px;flex-shrink:0}
-
-/* ARAMA */
 .nav-search{position:relative;z-index:300}
-.nav-search input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
-  color:var(--text);padding:7px 14px 7px 34px;font-size:12px;font-family:'Mulish',sans-serif;
-  border-radius:3px;outline:none;width:240px;transition:.2s}
+.nav-search input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:7px 14px 7px 34px;font-size:12px;font-family:'Mulish',sans-serif;border-radius:3px;outline:none;width:240px;transition:.2s}
 .nav-search input:focus{border-color:rgba(212,80,10,.45);background:rgba(255,255,255,.08)}
 .nav-search input::placeholder{color:var(--muted)}
-.nav-search .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);
-  color:var(--muted);font-size:13px;pointer-events:none}
-.search-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1a0e08;
-  border:1px solid rgba(212,80,10,.4);border-radius:4px;z-index:9999;max-height:360px;
-  overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none}
+.nav-search .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+.search-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1a0e08;border:1px solid rgba(212,80,10,.4);border-radius:4px;z-index:9999;max-height:360px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.5);display:none}
 .search-dropdown.open{display:block}
-.sdrop-item{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;
-  transition:.12s;border-bottom:1px solid rgba(255,255,255,.04)}
+.sdrop-item{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:.12s;border-bottom:1px solid rgba(255,255,255,.04)}
 .sdrop-item:last-child{border-bottom:none}
 .sdrop-item:hover{background:rgba(212,80,10,.12)}
-.sdrop-thumb{width:32px;height:44px;border-radius:2px;flex-shrink:0;background:#150e08;
-  border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
+.sdrop-thumb{width:32px;height:44px;border-radius:2px;flex-shrink:0;background:#150e08;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden}
 .sdrop-thumb img{width:100%;height:100%;object-fit:cover}
 .sdrop-info{flex:1;min-width:0}
 .sdrop-title{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -61,38 +41,24 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .sdrop-type.manga{background:rgba(255,165,0,.15);color:#ffa500}
 .sdrop-type.manhua{background:rgba(155,93,229,.15);color:#9b5de5}
 .sdrop-empty{padding:14px;text-align:center;color:var(--muted);font-size:11px}
-
-/* NAV BUTONLARI */
-.nav-btn{background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;
-  padding:7px 18px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px}
-
-/* KULLANICI MENÜSÜ */
+.nav-btn{background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;padding:7px 18px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.5px}
 .user-menu-wrap{position:relative}
-.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--red);border:2px solid rgba(212,80,10,.4);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;
-  color:#fff;overflow:hidden;transition:.15s}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--red);border:2px solid rgba(212,80,10,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;overflow:hidden;transition:.15s}
 .user-avatar:hover{border-color:var(--red)}
 .user-avatar img{width:100%;height:100%;object-fit:cover}
-.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#1a0e08;
-  border:1px solid var(--bdr);border-radius:4px;width:200px;z-index:300;display:none}
+.user-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:#1a0e08;border:1px solid var(--bdr);border-radius:4px;width:200px;z-index:300;display:none}
 .user-dropdown.open{display:block}
 .ud-header{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
 .ud-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
 .ud-role{font-size:10px;font-weight:700;letter-spacing:.5px}
-.ud-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;
-  font-size:12px;color:var(--muted);transition:.12s}
+.ud-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;font-size:12px;color:var(--muted);transition:.12s}
 .ud-item:hover{color:#fff;background:rgba(212,80,10,.06)}
 .ud-item.danger{color:#f87171}
 .ud-item.danger:hover{background:rgba(255,50,50,.06)}
 .ud-divider{border-top:1px solid rgba(255,255,255,.06);margin:4px 0}
-
-/* AVATAR UPLOAD */
 .avatar-upload-wrap{position:relative;cursor:pointer}
 .avatar-upload-wrap:hover .avatar-overlay{opacity:1}
-.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0;transition:.2s}
-
-/* ROL ROZET STACK */
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0;transition:.2s}
 .roles-stack{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .role-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.5px}
 .role-badge-Yeni{background:rgba(136,136,136,.15);color:#888}
@@ -101,24 +67,15 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .role-badge-Efsane{background:rgba(251,191,36,.15);color:#fbbf24}
 .role-badge-Admin{background:rgba(248,113,113,.15);color:#f87171}
 .role-badge-custom{background:rgba(212,80,10,.15);color:#e87c1e}
-
-/* TYPE TABS */
 .type-tabs{display:flex;padding:0 48px;background:rgba(13,8,5,.85);border-bottom:1px solid rgba(212,80,10,.1)}
-.tab{padding:11px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);
-  text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;margin-bottom:-1px}
+.tab{padding:11px 18px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;margin-bottom:-1px}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--gold);border-bottom-color:var(--red)}
 .tab-badge{display:inline-block;background:rgba(212,80,10,.2);color:var(--gold);font-size:8px;padding:1px 5px;border-radius:2px;margin-left:4px}
-
-/* SOURCE ROW */
-.src-row{padding:8px 48px;background:rgba(13,8,5,.6);border-bottom:1px solid rgba(212,80,10,.08);
-  display:flex;align-items:center;gap:10px}
+.src-row{padding:8px 48px;background:rgba(13,8,5,.6);border-bottom:1px solid rgba(212,80,10,.08);display:flex;align-items:center;gap:10px}
 .src-label{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
-.src-btn{border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:4px 12px;font-size:10px;
-  font-weight:700;cursor:pointer;background:transparent;border-radius:2px;transition:.15s;text-transform:uppercase}
+.src-btn{border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;background:transparent;border-radius:2px;transition:.15s;text-transform:uppercase}
 .src-btn:hover,.src-btn.active{border-color:var(--red);color:var(--red);background:rgba(212,80,10,.06)}
-
-/* HERO SLIDER */
 .hero{position:relative;min-height:75vh;overflow:hidden;display:flex;align-items:flex-end}
 .hero-slides{position:absolute;inset:0;display:flex;transition:none}
 .hero-slide{flex-shrink:0;width:100%;height:100%;position:relative;overflow:hidden}
@@ -126,47 +83,32 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .hero-slide-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(13,8,5,.95) 0%,rgba(13,8,5,.6) 50%,transparent 100%)}
 .hero-slide-overlay2{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,8,5,.8) 0%,transparent 60%)}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(212,80,10,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(212,80,10,.05) 1px,transparent 1px);background-size:60px 60px;opacity:.6}
-.hero-glow{position:absolute;right:-50px;top:40%;transform:translateY(-50%);width:500px;height:500px;
-  background:radial-gradient(circle,rgba(212,80,10,.1) 0%,transparent 70%);pointer-events:none}
+.hero-glow{position:absolute;right:-50px;top:40%;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(212,80,10,.1) 0%,transparent 70%);pointer-events:none}
 .hero-content{position:relative;z-index:2;padding:0 48px 64px;max-width:580px}
-.hero-badge{display:inline-block;background:rgba(212,80,10,.18);border:1px solid rgba(212,80,10,.35);
-  color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  padding:5px 12px;border-radius:2px;margin-bottom:18px}
+.hero-badge{display:inline-block;background:rgba(212,80,10,.18);border:1px solid rgba(212,80,10,.35);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:2px;margin-bottom:18px}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:.95;letter-spacing:2px;margin-bottom:14px;color:#fff}
 .hero h1 span{color:var(--red)}
 .hero p{color:var(--muted);font-size:14px;line-height:1.75;max-width:400px;margin-bottom:28px}
 .hero-btns{display:flex;gap:12px}
-.btn-primary{background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;
-  padding:12px 28px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;
-  box-shadow:0 2px 12px rgba(212,80,10,.3)}
-.btn-secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);
-  padding:12px 28px;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;padding:12px 28px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;box-shadow:0 2px 12px rgba(212,80,10,.3)}
+.btn-secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:12px 28px;font-size:13px;font-weight:600;border-radius:3px;cursor:pointer}
 .hero-stats{position:absolute;right:48px;bottom:64px;z-index:2;display:flex;gap:40px}
 .stat-item{text-align:right}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--gold);line-height:1}
 .stat-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-
-/* SLIDER DOTS */
 .slider-dots{position:absolute;bottom:20px;left:48px;z-index:3;display:flex;gap:7px}
 .slider-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:.2s}
 .slider-dot.on{background:var(--red);width:20px;border-radius:4px}
 .slider-arrows{position:absolute;right:48px;top:50%;transform:translateY(-50%);z-index:3;display:flex;gap:8px}
-.slider-arrow{width:36px;height:36px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);
-  color:#fff;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:16px;transition:.15s}
+.slider-arrow{width:36px;height:36px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s}
 .slider-arrow:hover{background:rgba(212,80,10,.4);border-color:var(--red)}
-
-/* SECTION */
 .section{padding:48px 48px 0}
 .section-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:#fff;flex-shrink:0}
 .section-line{flex:1;height:1px;background:linear-gradient(to right,rgba(212,80,10,.3),transparent)}
 .section-more{color:var(--red);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;flex-shrink:0}
-
-/* MANGA GRID */
 .manga-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.manga-card{position:relative;cursor:pointer;border-radius:4px;overflow:hidden;aspect-ratio:2/3;
-  background:var(--card);border:1px solid rgba(212,80,10,.08);transition:.2s}
+.manga-card{position:relative;cursor:pointer;border-radius:4px;overflow:hidden;aspect-ratio:2/3;background:var(--card);border:1px solid rgba(212,80,10,.08);transition:.2s}
 .manga-card:hover{border-color:rgba(212,80,10,.5);transform:translateY(-3px);box-shadow:0 4px 20px rgba(212,80,10,.15)}
 .manga-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .manga-card:hover img{transform:scale(1.06)}
@@ -177,8 +119,7 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .manga-card:hover .manga-info{transform:translateY(0);opacity:1}
 .manga-title{font-size:11px;font-weight:700;line-height:1.3;margin-bottom:3px;color:#fff}
 .manga-meta{font-size:9px;color:rgba(255,255,255,.6)}
-.manga-badge{position:absolute;top:7px;left:7px;background:linear-gradient(135deg,var(--red),#a83000);
-  color:#fff;font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:2px;text-transform:uppercase}
+.manga-badge{position:absolute;top:7px;left:7px;background:linear-gradient(135deg,var(--red),#a83000);color:#fff;font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:2px;text-transform:uppercase}
 .manga-badge.gold{background:linear-gradient(135deg,var(--gold),#c05a00);color:#fff}
 .manga-badge.new{background:linear-gradient(135deg,#2d6a4f,#1a4a30);color:#fff}
 .manga-type{position:absolute;top:7px;right:7px;font-size:8px;font-weight:700;padding:2px 5px;border-radius:2px}
@@ -186,21 +127,14 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .manga-type.manga{background:rgba(255,165,0,.15);color:#ffa500}
 .manga-type.manhua{background:rgba(155,93,229,.15);color:#9b5de5}
 .manga-rank{position:absolute;bottom:7px;right:7px;font-family:'Bebas Neue',sans-serif;font-size:32px;color:rgba(212,80,10,.2);line-height:1}
-
-/* FAVORİ BUTONU */
-.fav-btn{position:absolute;top:7px;left:7px;width:24px;height:24px;background:rgba(0,0,0,.6);
-  border:none;border-radius:50%;cursor:pointer;font-size:12px;display:none;align-items:center;
-  justify-content:center;z-index:5;transition:.15s}
+.fav-btn{position:absolute;top:7px;left:7px;width:24px;height:24px;background:rgba(0,0,0,.6);border:none;border-radius:50%;cursor:pointer;font-size:12px;display:none;align-items:center;justify-content:center;z-index:5;transition:.15s}
 .manga-card:hover .fav-btn{display:flex}
 .fav-btn:hover{background:rgba(212,80,10,.6);transform:scale(1.1)}
-
-/* UPDATES */
 .updates-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(212,80,10,.1);border-radius:4px;overflow:hidden}
 .upd-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(212,80,10,.07);border-right:1px solid rgba(212,80,10,.07);cursor:pointer;transition:.15s}
 .upd-item:hover{background:rgba(212,80,10,.04)}
 .upd-item:nth-child(even){border-right:none}
-.upd-thumb{width:40px;height:54px;background:var(--card);border-radius:3px;flex-shrink:0;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.06)}
+.upd-thumb{width:40px;height:54px;background:var(--card);border-radius:3px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.06)}
 .upd-thumb img{width:100%;height:100%;object-fit:cover}
 .upd-info{flex:1;min-width:0}
 .upd-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -213,8 +147,6 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .upd-type.manhwa{background:rgba(232,124,30,.1);color:#e87c1e}
 .upd-type.manga{background:rgba(255,165,0,.1);color:#ffa500}
 .upd-type.manhua{background:rgba(155,93,229,.1);color:#9b5de5}
-
-/* FEATURED */
 .featured-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .featured-card{position:relative;border-radius:4px;overflow:hidden;height:220px;cursor:pointer;background:var(--card);border:1px solid rgba(255,255,255,.06)}
 .featured-card img{width:100%;height:100%;object-fit:cover}
@@ -223,32 +155,20 @@ nav ul a:hover,nav ul a.active{color:#fff}
 .featured-genre{font-size:9px;color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
 .featured-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:6px;color:#fff}
 .featured-desc{font-size:11px;color:rgba(255,255,255,.6);line-height:1.5;max-width:240px}
-
-/* GENRES */
 .genre-row{display:flex;gap:8px;flex-wrap:wrap;padding:32px 48px}
-.genre-tag{border:1px solid rgba(212,80,10,.15);color:var(--muted);padding:6px 16px;border-radius:20px;
-  font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
+.genre-tag{border:1px solid rgba(212,80,10,.15);color:var(--muted);padding:6px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:.15s}
 .genre-tag:hover,.genre-tag.active{border-color:var(--red);color:var(--red);background:rgba(212,80,10,.06)}
-
-/* LOADING */
 .loading{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--muted);font-size:12px;grid-column:1/-1}
 .loading::after{content:'';width:14px;height:14px;border:1px solid rgba(212,80,10,.35);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin-left:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{padding:24px;text-align:center;color:var(--muted);font-size:12px;grid-column:1/-1}
-
-/* API PILL */
-.api-pill{position:fixed;bottom:14px;right:14px;background:var(--card);border:1px solid var(--bdr);
-  padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);z-index:1000;
-  display:flex;align-items:center;gap:6px;border-radius:20px;text-transform:uppercase}
+.api-pill{position:fixed;bottom:14px;right:14px;background:var(--card);border:1px solid var(--bdr);padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);z-index:1000;display:flex;align-items:center;gap:6px;border-radius:20px;text-transform:uppercase}
 .api-dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
 .api-dot.on{background:#ff9b4d;box-shadow:0 0 6px rgba(255,155,77,.5)}
 .api-dot.off{background:var(--red)}
-
 footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;margin-top:48px}
 .footer-logo span{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff}
 .footer-copy{font-size:11px;color:var(--muted)}
-
-/* AUTH MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .modal-bg.open{display:flex}
 .modal{background:#1a0e08;border:1px solid var(--bdr);padding:32px;width:380px;border-radius:6px}
@@ -256,21 +176,13 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 .modal-logo em{color:var(--red);font-style:normal}
 .modal-sub{font-size:11px;color:var(--muted);margin-bottom:24px;letter-spacing:1px;text-transform:uppercase}
 .modal label{display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-.modal input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  color:var(--text);padding:10px 14px;font-size:13px;font-family:'Mulish',sans-serif;
-  border-radius:3px;outline:none;margin-bottom:14px;transition:.2s}
+.modal input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:10px 14px;font-size:13px;font-family:'Mulish',sans-serif;border-radius:3px;outline:none;margin-bottom:14px;transition:.2s}
 .modal input:focus{border-color:rgba(212,80,10,.5)}
-.modal-btn{width:100%;background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;
-  padding:11px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;margin-bottom:12px}
+.modal-btn{width:100%;background:linear-gradient(135deg,var(--red),#a83000);color:#fff;border:none;padding:11px;font-size:13px;font-weight:700;border-radius:3px;cursor:pointer;margin-bottom:12px}
 .modal-switch{text-align:center;font-size:12px;color:var(--muted)}
 .modal-switch a{color:var(--red);cursor:pointer;font-weight:700}
-.modal-err{background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);color:#ff6b6b;
-  padding:8px 12px;font-size:12px;border-radius:3px;margin-bottom:12px;display:none}
-.modal-close{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--muted);
-  font-size:18px;cursor:pointer;line-height:1}
-.modal{position:relative}
-
-/* PROFİL MODALİ */
+.modal-err{background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);color:#ff6b6b;padding:8px 12px;font-size:12px;border-radius:3px;margin-bottom:12px;display:none}
+.modal-close{position:absolute;top:12px;right:12px;background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
 .profile-modal{width:460px}
 .profile-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--bdr)}
 .profile-avatar{width:60px;height:60px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0}
@@ -280,14 +192,10 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 .ps{text-align:center;flex:1;background:rgba(255,255,255,.04);border-radius:4px;padding:12px}
 .ps-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold)}
 .ps-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-
-/* GEÇMİŞ */
 .history-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}
-.hist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.03);
-  border-radius:3px;cursor:pointer;transition:.12s;border:1px solid rgba(255,255,255,.04)}
+.hist-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:3px;cursor:pointer;transition:.12s;border:1px solid rgba(255,255,255,.04)}
 .hist-item:hover{background:rgba(212,80,10,.08);border-color:var(--bdr)}
-.hist-thumb{width:32px;height:44px;object-fit:cover;border-radius:2px;background:var(--card);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:14px}
+.hist-thumb{width:32px;height:44px;object-fit:cover;border-radius:2px;background:var(--card);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
 .hist-thumb img{width:100%;height:100%;object-fit:cover;border-radius:2px}
 .hist-info{flex:1;min-width:0}
 .hist-title{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -296,14 +204,9 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 .hist-status.reading{background:rgba(59,130,246,.15);color:#60a5fa}
 .hist-status.completed{background:rgba(45,158,95,.15);color:#34d399}
 .tab-bar{display:flex;gap:0;margin-bottom:14px;border-bottom:1px solid var(--bdr)}
-.tb{padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;margin-bottom:-1px}
+.tb{padding:8px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;margin-bottom:-1px}
 .tb:hover{color:var(--text)}.tb.on{color:var(--gold);border-bottom-color:var(--red)}
-
-/* TOAST */
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(60px);
-  background:#1a0e08;border:1px solid var(--bdr);padding:10px 20px;border-radius:20px;
-  font-size:12px;font-weight:700;z-index:9999;opacity:0;transition:.3s;white-space:nowrap}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(60px);background:#1a0e08;border:1px solid var(--bdr);padding:10px 20px;border-radius:20px;font-size:12px;font-weight:700;z-index:9999;opacity:0;transition:.3s;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.success{border-color:var(--green,#2d9e5f);color:#34d399}
 .toast.error{border-color:var(--red);color:#f87171}
@@ -315,7 +218,7 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="#">
-    <span id="navSiteName">MANGA<em>SAL</em></span>
+    <span id="navSiteName">VOID<em>SCANS</em></span>
   </a>
   <ul>
     <li><a onclick="filterType('')">Tümü</a></li>
@@ -357,7 +260,6 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 <!-- HERO SLIDER -->
 <div class="hero" id="heroSection">
   <div class="hero-slides" id="heroSlides">
-    <!-- default slide (ayarlar yüklenince değişir) -->
     <div class="hero-slide">
       <div class="hero-slide-bg" id="defaultBg" style="background:linear-gradient(135deg,#0d0805 0%,#1a0a02 40%,#0d0805 100%)"></div>
       <div class="hero-grid"></div>
@@ -435,19 +337,17 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 </div>
 
 <footer>
-  <div class="footer-logo"><span id="footerSiteName">MANGASAL</span></div>
-  <div class="footer-copy" id="footerCopy">© 2025 Mangasal — Gölge Bahçesi + Ragnar Scans</div>
+  <div class="footer-logo"><span id="footerSiteName">VOIDSCANS</span></div>
+  <div class="footer-copy" id="footerCopy">© 2025 VoidScans — Gölge Bahçesi + Ragnar Scans</div>
 </footer>
 
 <!-- AUTH MODAL -->
 <div class="modal-bg" id="authModal">
   <div class="modal">
     <button class="modal-close" onclick="closeAuth()">✕</button>
-    <div class="modal-logo">MANGA<em>SAL</em></div>
+    <div class="modal-logo">VOID<em>SCANS</em></div>
     <div class="modal-sub" id="authSubtitle">Giriş Yap</div>
     <div class="modal-err" id="authErr"></div>
-
-    <!-- GİRİŞ -->
     <div id="loginForm">
       <label>E-posta</label>
       <input type="email" id="loginEmail" placeholder="ornek@mail.com">
@@ -456,8 +356,6 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
       <button class="modal-btn" onclick="doLogin()">Giriş Yap</button>
       <div class="modal-switch">Hesabın yok mu? <a onclick="showRegister()">Kayıt Ol</a></div>
     </div>
-
-    <!-- KAYIT -->
     <div id="registerForm" style="display:none">
       <label>Kullanıcı Adı</label>
       <input type="text" id="regUser" placeholder="kullanici_adi">
@@ -491,29 +389,17 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
       <div class="ps"><div class="ps-n" id="profCompleted">0</div><div class="ps-l">Tamamlandı</div></div>
       <div class="ps"><div class="ps-n" id="profReading">0</div><div class="ps-l">Okunuyor</div></div>
     </div>
-
-    <!-- SEKMELER -->
     <div class="tab-bar">
       <div class="tb on" onclick="showProfileTab('history',this)">Okuma Geçmişi</div>
       <div class="tb" onclick="showProfileTab('favorites',this)">Favoriler</div>
       <div class="tb" onclick="showProfileTab('edit',this)">Profil Düzenle</div>
     </div>
-
-    <!-- GEÇMİŞ -->
     <div id="profileTabHistory">
-      <div class="history-list" id="historyList">
-        <div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div>
-      </div>
+      <div class="history-list" id="historyList"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div></div>
     </div>
-
-    <!-- FAVORİLER -->
     <div id="profileTabFavorites" style="display:none">
-      <div class="history-list" id="favoritesList">
-        <div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div>
-      </div>
+      <div class="history-list" id="favoritesList"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div></div>
     </div>
-
-    <!-- DÜZENLE -->
     <div id="profileTabEdit" style="display:none">
       <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Kullanıcı Adı</label>
       <input id="editUsername" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:9px 12px;font-size:13px;font-family:'Mulish',sans-serif;border-radius:3px;outline:none;margin-bottom:12px">
@@ -526,7 +412,6 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
       </div>
       <button class="modal-btn" onclick="saveProfile()">Kaydet</button>
     </div>
-
   </div>
 </div>
 
@@ -538,11 +423,19 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://web-production-49cce.up.railway.app/api';
+// API base URL - GÖRECELİ (Railway'de çalışır)
+const API = '/api';
 let curType='', curSource='', curGenre='', srchTimer=null, apiOk=false;
 let currentUser=null, authToken=null;
 let siteSettings={};
 let slides=[], slideIdx=0, slideTimer=null;
+
+// Proxy ile resim URL'sini düzenle
+function proxyImage(url) {
+  if (!url) return '';
+  if (url.startsWith('data:') || url.startsWith('/')) return url;
+  return `${API}/proxy/image?url=${encodeURIComponent(url)}`;
+}
 
 // ── API ───────────────────────────────────────
 async function get(ep, opts={}) {
@@ -561,24 +454,16 @@ async function loadSiteSettings() {
   if (!data || !data.data) return;
   const d = data.data;
   siteSettings = d;
-
-  // Site adı parçaları
-  const p1 = d.site_name_part1 || 'MANGA';
-  const p2 = d.site_name_part2 || 'SAL';
+  const p1 = d.site_name_part1 || 'VOID';
+  const p2 = d.site_name_part2 || 'SCANS';
   const nc = d.name_color || '#d4500a';
-  const fullName = p1 + p2;
-
-  document.title = fullName;
-  // Navbar logo yazısı
-  const nameHtml = `${p1}<em style="color:${nc};font-style:normal">${p2}</em>`;
-  document.getElementById('navSiteName').innerHTML = nameHtml;
-  document.getElementById('footerSiteName').innerHTML = nameHtml;
-  document.getElementById('footerCopy').textContent = `© ${new Date().getFullYear()} ${fullName}`;
-
-  // Logo resmi
+  document.title = p1+p2;
+  document.getElementById('navSiteName').innerHTML = `${p1}<em style="color:${nc};font-style:normal">${p2}</em>`;
+  document.getElementById('footerSiteName').innerHTML = p1+p2;
+  document.getElementById('footerCopy').textContent = `© ${new Date().getFullYear()} ${p1+p2}`;
   if (d.site_logo) {
     const logoImg = document.createElement('img');
-    logoImg.src = d.site_logo;
+    logoImg.src = proxyImage(d.site_logo);
     logoImg.style.cssText = 'width:32px;height:32px;border-radius:8px;object-fit:cover';
     const logoWrap = document.querySelector('.nav-logo');
     if (logoWrap) {
@@ -587,13 +472,9 @@ async function loadSiteSettings() {
       else logoWrap.insertBefore(logoImg, logoWrap.firstChild);
     }
   }
-
-  // Hero yazıları
   if (d.hero_title)    document.getElementById('heroTitle').childNodes[0].textContent = d.hero_title+'\n';
   if (d.hero_subtitle) document.getElementById('heroSubtitle').textContent = d.hero_subtitle;
   if (d.hero_desc)     document.getElementById('heroDesc').textContent = d.hero_desc;
-
-  // Renkler
   if (d.primary_color || d.bg_color) {
     let css = ':root{';
     if (d.primary_color) css += `--red:${d.primary_color};--gold:${d.primary_color};`;
@@ -606,45 +487,36 @@ async function loadSiteSettings() {
     document.getElementById('dynamic-theme')?.remove();
     document.head.appendChild(style);
   }
-
-  // Hero bannerlar
   const banners = Array.isArray(d.hero_banners) ? d.hero_banners : [];
   initSlider(banners);
 }
 
-// ── SLIDER ────────────────────────────────────
 function initSlider(banners) {
   const validBanners = banners.filter(b => b.image_url);
   if (!validBanners.length) {
     document.getElementById('sliderDots').style.display = 'none';
     return;
   }
-
   slides = validBanners;
   slideIdx = 0;
-
   const slidesWrap = document.getElementById('heroSlides');
   slidesWrap.innerHTML = '';
-
   slides.forEach((b, i) => {
     const slide = document.createElement('div');
     slide.className = 'hero-slide';
     slide.style.cssText = 'flex-shrink:0;width:100%;height:100%;position:relative;overflow:hidden';
     slide.innerHTML = `
-      <div class="hero-slide-bg" style="position:absolute;inset:0;background-image:url('${b.image_url}');background-size:cover;background-position:center"></div>
+      <div class="hero-slide-bg" style="position:absolute;inset:0;background-image:url('${proxyImage(b.image_url)}');background-size:cover;background-position:center"></div>
       <div class="hero-grid"></div>
       <div class="hero-glow"></div>
       <div class="hero-slide-overlay"></div>
       <div class="hero-slide-overlay2"></div>`;
     slidesWrap.appendChild(slide);
   });
-
-  // Dots
   const dotsWrap = document.getElementById('sliderDots');
   dotsWrap.innerHTML = slides.map((_, i) =>
     `<div class="slider-dot${i===0?' on':''}" onclick="goSlide(${i})"></div>`
   ).join('');
-
   if (slides.length > 1) {
     document.getElementById('sliderArrows').style.display = 'flex';
     startSlideTimer();
@@ -659,8 +531,6 @@ function goSlide(idx) {
   wrap.style.transition = 'transform .5s ease';
   wrap.style.transform = `translateX(-${slideIdx * 100}%)`;
   document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('on', i===slideIdx));
-
-  // Hero yazılarını güncelle
   const b = slides[slideIdx];
   if (b.title)    document.getElementById('heroTitle').childNodes[0].textContent = b.title+'\n';
   if (b.subtitle) document.getElementById('heroSubtitle').textContent = b.subtitle;
@@ -699,17 +569,14 @@ async function checkSession() {
 }
 
 function renderNavGuest() {
-  document.getElementById('navAuthArea').innerHTML = `
-    <button class="nav-btn" onclick="openAuth()">Giriş Yap</button>`;
+  document.getElementById('navAuthArea').innerHTML = `<button class="nav-btn" onclick="openAuth()">Giriş Yap</button>`;
 }
 
 function renderNavUser() {
   const u = currentUser;
   const roleCls = 'role-'+(u.role||'Yeni');
   const initial = (u.username||'?')[0].toUpperCase();
-  const avatarHtml = u.avatar_url
-    ? `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-    : initial;
+  const avatarHtml = u.avatar_url ? `<img src="${proxyImage(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initial;
   document.getElementById('navAuthArea').innerHTML = `
     <div class="user-menu-wrap">
       <div class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn">${avatarHtml}</div>
@@ -727,40 +594,13 @@ function renderNavUser() {
     </div>`;
 }
 
-function renderRolesStack(u) {
-  const wrap = document.getElementById('profileRolesStack');
-  if (!wrap) return;
-  const earned = Array.isArray(u.roles_earned) ? u.roles_earned : [u.role||'Yeni'];
-  let html = '';
-  earned.forEach(r => { html += `<span class="role-badge role-badge-${r}">${r}</span>`; });
-  if (u.custom_role) html += `<span class="role-badge role-badge-custom">+ ${u.custom_role}</span>`;
-  wrap.innerHTML = html;
-}
+function toggleUserMenu() { document.getElementById('userDropdown')?.classList.toggle('open'); }
+document.addEventListener('click', e => { if (!e.target.closest('.user-menu-wrap')) document.getElementById('userDropdown')?.classList.remove('open'); });
 
-function toggleUserMenu() {
-  document.getElementById('userDropdown')?.classList.toggle('open');
-}
-document.addEventListener('click', e => {
-  if (!e.target.closest('.user-menu-wrap')) document.getElementById('userDropdown')?.classList.remove('open');
-});
-
-function openAuth() {
-  showLogin();
-  document.getElementById('authModal').classList.add('open');
-}
+function openAuth() { showLogin(); document.getElementById('authModal').classList.add('open'); }
 function closeAuth() { document.getElementById('authModal').classList.remove('open'); clearAuthErr(); }
-function showLogin() {
-  document.getElementById('authSubtitle').textContent = 'Giriş Yap';
-  document.getElementById('loginForm').style.display = '';
-  document.getElementById('registerForm').style.display = 'none';
-  clearAuthErr();
-}
-function showRegister() {
-  document.getElementById('authSubtitle').textContent = 'Kayıt Ol';
-  document.getElementById('loginForm').style.display = 'none';
-  document.getElementById('registerForm').style.display = '';
-  clearAuthErr();
-}
+function showLogin() { document.getElementById('authSubtitle').textContent = 'Giriş Yap'; document.getElementById('loginForm').style.display = ''; document.getElementById('registerForm').style.display = 'none'; clearAuthErr(); }
+function showRegister() { document.getElementById('authSubtitle').textContent = 'Kayıt Ol'; document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = ''; clearAuthErr(); }
 function clearAuthErr() { const e=document.getElementById('authErr'); e.style.display='none'; e.textContent=''; }
 function showAuthErr(msg) { const e=document.getElementById('authErr'); e.textContent=msg; e.style.display='block'; }
 
@@ -789,7 +629,6 @@ async function doRegister() {
   if (r.status !== 'ok') { showAuthErr(r.message||'Hata'); return; }
   authToken = r.token;
   localStorage.setItem('vs_token', authToken);
-  // Kullanıcı bilgilerini çek
   const me = await get('/auth/me');
   if (me && me.status==='ok') currentUser = me.user;
   closeAuth();
@@ -812,7 +651,7 @@ async function openProfile() {
   const u = currentUser;
   const avatarEl = document.getElementById('profileAvatar');
   if (u.avatar_url) {
-    avatarEl.innerHTML = `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    avatarEl.innerHTML = `<img src="${proxyImage(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
   } else {
     avatarEl.textContent = u.username[0].toUpperCase();
     avatarEl.style.fontSize = '24px';
@@ -829,10 +668,7 @@ async function openProfile() {
   loadHistory();
 }
 
-function triggerAvatarUpload() {
-  document.getElementById('avatarFileInput').click();
-}
-
+function triggerAvatarUpload() { document.getElementById('avatarFileInput').click(); }
 async function handleAvatarUpload(input) {
   const file = input.files[0];
   if (!file) return;
@@ -852,7 +688,6 @@ async function handleAvatarUpload(input) {
   reader.readAsDataURL(file);
 }
 function closeProfile() { document.getElementById('profileModal').classList.remove('open'); }
-
 function showProfileTab(name, btn) {
   document.getElementById('profileTabHistory').style.display   = name==='history'   ? '' : 'none';
   document.getElementById('profileTabFavorites').style.display = name==='favorites' ? '' : 'none';
@@ -877,31 +712,18 @@ async function loadFavorites() {
   }
   list.innerHTML = data.data.map(f => `
     <div class="hist-item" onclick="openUrl('${f.series_url}');closeProfile()">
-      <div class="hist-thumb">
-        ${f.series_cover ? `<img src="${f.series_cover}" onerror="this.style.display='none'">` : '⭐'}
-      </div>
-      <div class="hist-info">
-        <div class="hist-title">${f.series_title||'—'}</div>
-        <div class="hist-chap">${f.series_type||'Manhwa'}</div>
-      </div>
+      <div class="hist-thumb">${f.series_cover ? `<img src="${proxyImage(f.series_cover)}" onerror="this.style.display='none'">` : '⭐'}</div>
+      <div class="hist-info"><div class="hist-title">${f.series_title||'—'}</div><div class="hist-chap">${f.series_type||'Manhwa'}</div></div>
       <span style="font-size:18px;cursor:pointer" onclick="event.stopPropagation();removeFavorite('${f.series_url}')">🗑️</span>
     </div>`).join('');
 }
 
 async function toggleFavorite(url, title, cover, type, btn) {
   if (!authToken) { openAuth(); return; }
-  const r = await get('/user/favorites', {method:'POST', body:JSON.stringify({
-    series_url: url, series_title: title,
-    series_cover: cover, series_type: type
-  })});
+  const r = await get('/user/favorites', {method:'POST', body:JSON.stringify({series_url: url, series_title: title, series_cover: cover, series_type: type})});
   if (!r) return;
-  if (r.action === 'added') {
-    btn.textContent = '💛';
-    toast('Favorilere eklendi ✓','success');
-  } else {
-    btn.textContent = '⭐';
-    toast('Favoriden kaldırıldı','info');
-  }
+  if (r.action === 'added') { btn.textContent = '💛'; toast('Favorilere eklendi ✓','success'); }
+  else { btn.textContent = '⭐'; toast('Favoriden kaldırıldı','info'); }
 }
 
 async function removeFavorite(url) {
@@ -920,28 +742,30 @@ async function loadHistory() {
   }
   list.innerHTML = data.data.map(p => `
     <div class="hist-item" onclick="openUrl('${p.series_url}')">
-      <div class="hist-thumb">
-        ${p.series_cover ? `<img src="${p.series_cover}" onerror="this.style.display='none'">` : '📖'}
-      </div>
-      <div class="hist-info">
-        <div class="hist-title">${p.series_title||'—'}</div>
-        <div class="hist-chap">${p.last_chapter_num||'Başlanmadı'}</div>
-      </div>
+      <div class="hist-thumb">${p.series_cover ? `<img src="${proxyImage(p.series_cover)}" onerror="this.style.display='none'">` : '📖'}</div>
+      <div class="hist-info"><div class="hist-title">${p.series_title||'—'}</div><div class="hist-chap">${p.last_chapter_num||'Başlanmadı'}</div></div>
       <span class="hist-status ${p.status||'reading'}">${p.status==='completed'?'Tamamlandı':'Okunuyor'}</span>
     </div>`).join('');
 }
 
 async function saveProfile() {
-  const r = await get('/user/profile', {method:'POST', body:JSON.stringify({
-    username: document.getElementById('editUsername').value,
-    bio:      document.getElementById('editBio').value,
-  })});
+  const r = await get('/user/profile', {method:'POST', body:JSON.stringify({username: document.getElementById('editUsername').value, bio: document.getElementById('editBio').value})});
   if (r && r.status==='ok') {
     const me = await get('/auth/me');
     if (me && me.status==='ok') { currentUser=me.user; renderNavUser(); }
     renderRolesStack(currentUser);
     toast('Profil güncellendi ✓','success');
   } else toast('Hata!','error');
+}
+
+function renderRolesStack(u) {
+  const wrap = document.getElementById('profileRolesStack');
+  if (!wrap) return;
+  const earned = Array.isArray(u.roles_earned) ? u.roles_earned : [u.role||'Yeni'];
+  let html = '';
+  earned.forEach(r => { html += `<span class="role-badge role-badge-${r}">${r}</span>`; });
+  if (u.custom_role) html += `<span class="role-badge role-badge-custom">+ ${u.custom_role}</span>`;
+  wrap.innerHTML = html;
 }
 
 // ── İSTATİSTİKLER ─────────────────────────────
@@ -980,7 +804,7 @@ async function loadTrend(more=false) {
     const favBtn = authToken ? `<button class="fav-btn" onclick="event.stopPropagation();toggleFavorite('${s.url}','${s.title.replace(/'/g,"\\'")}','${s.cover_url||''}','${s.content_type||'Manhwa'}',this)" title="Favorilere Ekle">⭐</button>` : '';
     grid.innerHTML += `
       <div class="manga-card" onclick="openUrl('${s.url}')">
-        ${s.cover_url?`<img src="${s.cover_url}" alt="${s.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+        ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" alt="${s.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
         <div class="manga-card-placeholder" style="display:${s.cover_url?'none':'flex'}">📖</div>
         ${favBtn}
         ${badge}
@@ -1009,14 +833,7 @@ function renderTrendDemo() {
   grid.innerHTML = '';
   demo.forEach((s,i)=>{
     const badge = s.b==='hot'?'<div class="manga-badge">HOT</div>':s.b==='gold'?'<div class="manga-badge gold">TOP</div>':s.b==='new'?'<div class="manga-badge new">YENİ</div>':'';
-    grid.innerHTML += `<div class="manga-card">
-      <div class="manga-card-placeholder" style="font-size:42px">${s.icon}</div>
-      ${badge}
-      <div class="manga-type manhwa">${s.t}</div>
-      <div class="manga-rank">${i+1}</div>
-      <div class="manga-overlay"></div>
-      <div class="manga-info"><div class="manga-title">${s.title}</div><div class="manga-meta">${s.ep}</div></div>
-    </div>`;
+    grid.innerHTML += `<div class="manga-card"><div class="manga-card-placeholder" style="font-size:42px">${s.icon}</div>${badge}<div class="manga-type manhwa">${s.t}</div><div class="manga-rank">${i+1}</div><div class="manga-overlay"></div><div class="manga-info"><div class="manga-title">${s.title}</div><div class="manga-meta">${s.ep}</div></div></div>`;
   });
 }
 
@@ -1039,15 +856,12 @@ async function loadLatest(more=false) {
   grid.innerHTML = '';
   data.data.forEach(s => {
     const tc = (s.content_type||'manhwa').toLowerCase();
-    const src = s.source==='golgebahcesi' ? 'Gölge Bahçesi' :
-                s.source==='ragnarscans'  ? 'Ragnar Scans' :
-                s.source==='nirvanamanga' ? 'Nirvana Manga' :
-                s.source==='trmangaoku'   ? 'TR Manga Oku' : s.source;
+    const src = s.source==='golgebahcesi' ? 'Gölge Bahçesi' : s.source==='ragnarscans' ? 'Ragnar Scans' : s.source;
     const genres = (s.genres||[]).slice(0,3).join(', ');
     const t = relTime(s.last_updated);
     grid.innerHTML += `
       <div class="upd-item" onclick="openUrl('${s.url}')">
-        <div class="upd-thumb">${s.cover_url?`<img src="${s.cover_url}" onerror="this.style.display='none'">` : '<span>📖</span>'}</div>
+        <div class="upd-thumb">${s.cover_url?`<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none'">` : '<span>📖</span>'}</div>
         <div class="upd-info">
           <div class="upd-title">${s.title}</div>
           <div class="upd-sub">${src} • ${s.status||'Devam Ediyor'}</div>
@@ -1076,23 +890,10 @@ function renderLatestDemo() {
   grid.innerHTML = '';
   demo.forEach(s=>{
     const tc=s.t.toLowerCase();
-    grid.innerHTML+=`<div class="upd-item">
-      <div class="upd-thumb" style="font-size:18px;justify-content:center">${s.icon}</div>
-      <div class="upd-info">
-        <div class="upd-title">${s.title}</div>
-        <div class="upd-sub">${s.src} • Devam Ediyor</div>
-        <div class="upd-genres">${s.genres}</div>
-      </div>
-      <div class="upd-right">
-        <div class="upd-ep">${s.ep}</div>
-        <div class="upd-time">${s.time}</div>
-        <div class="upd-type ${tc}">${s.t}</div>
-      </div>
-    </div>`;
+    grid.innerHTML+=`<div class="upd-item"><div class="upd-thumb" style="font-size:18px;justify-content:center">${s.icon}</div><div class="upd-info"><div class="upd-title">${s.title}</div><div class="upd-sub">${s.src} • Devam Ediyor</div><div class="upd-genres">${s.genres}</div></div><div class="upd-right"><div class="upd-ep">${s.ep}</div><div class="upd-time">${s.time}</div><div class="upd-type ${tc}">${s.t}</div></div></div>`;
   });
 }
 
-// ── FEATURED ──────────────────────────────────
 function updateFeatured(series) {
   if (!series||series.length<2) return;
   const grid = document.getElementById('featuredGrid');
@@ -1101,7 +902,7 @@ function updateFeatured(series) {
     const genres = (s.genres||[]).slice(0,2).join(' • ');
     grid.innerHTML += `
       <div class="featured-card" onclick="openUrl('${s.url}')">
-        ${s.cover_url?`<img src="${s.cover_url}" alt="${s.title}">` : '<div class="featured-placeholder">📖</div>'}
+        ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" alt="${s.title}">` : '<div class="featured-placeholder">📖</div>'}
         <div class="featured-overlay">
           <div>
             <div class="featured-genre">${genres||'Manhwa'}</div>
@@ -1163,7 +964,7 @@ async function showAllSeries() {
     const tc=(s.content_type||'manhwa').toLowerCase();
     const genres=(s.genres||[]).slice(0,2).join(' • ');
     grid.innerHTML+=`<div class="manga-card" onclick="openUrl('${s.url}')">
-      ${s.cover_url?`<img src="${s.cover_url}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+      ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
       <div class="manga-card-placeholder" style="display:${s.cover_url?'none':'flex'}">📖</div>
       <div class="manga-type ${tc}">${s.content_type||'Manhwa'}</div>
       <div class="manga-overlay"></div>
@@ -1174,16 +975,11 @@ async function showAllSeries() {
 }
 
 // ── ARAMA ─────────────────────────────────────
-function closeSearch() {
-  const dd = document.getElementById('searchDropdown');
-  if (dd) { dd.classList.remove('open'); }
-}
-
+function closeSearch() { const dd = document.getElementById('searchDropdown'); if (dd) dd.classList.remove('open'); }
 function handleSearch(q) {
   clearTimeout(srchTimer);
   const dd = document.getElementById('searchDropdown');
   if (!q || q.length < 1) { closeSearch(); return; }
-
   srchTimer = setTimeout(async () => {
     const data = await get('/search?q=' + encodeURIComponent(q) + '&limit=8');
     if (!data || !data.data) return;
@@ -1193,19 +989,11 @@ function handleSearch(q) {
     } else {
       data.data.forEach(s => {
         const tc = (s.content_type||'manhwa').toLowerCase();
-        const src = s.source === 'golgebahcesi' ? 'Gölge Bahçesi' :
-                    s.source === 'ragnarscans'  ? 'Ragnar Scans' :
-                    s.source === 'nirvanamanga' ? 'Nirvana Manga' :
-                    s.source === 'trmangaoku'   ? 'TR Manga Oku' : s.source;
+        const src = s.source === 'golgebahcesi' ? 'Gölge Bahçesi' : s.source === 'ragnarscans' ? 'Ragnar Scans' : s.source;
         dd.innerHTML += `
           <div class="sdrop-item" onmousedown="openUrl('${s.url}')">
-            <div class="sdrop-thumb">
-              ${s.cover_url ? `<img src="${s.cover_url}" onerror="this.style.display='none'">` : '📖'}
-            </div>
-            <div class="sdrop-info">
-              <div class="sdrop-title">${s.title}</div>
-              <div class="sdrop-meta">${src} · ${s.latest_chapter||'—'}</div>
-            </div>
+            <div class="sdrop-thumb">${s.cover_url ? `<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none'">` : '📖'}</div>
+            <div class="sdrop-info"><div class="sdrop-title">${s.title}</div><div class="sdrop-meta">${src} · ${s.latest_chapter||'—'}</div></div>
             <div class="sdrop-type ${tc}">${s.content_type||'Manhwa'}</div>
           </div>`;
       });
@@ -1214,15 +1002,7 @@ function handleSearch(q) {
   }, 200);
 }
 
-// ── URL / READER ──────────────────────────────
-function openUrl(url) {
-  if (!url) return;
-  // Okuma geçmişini kaydet (giriş yapılmışsa)
-  if (authToken && currentUser) {
-    // reader.html okuma geçmişini kaydedecek
-  }
-  window.location.href = 'reader.html?series='+encodeURIComponent(url);
-}
+function openUrl(url) { if (!url) return; window.location.href = 'reader.html?series='+encodeURIComponent(url); }
 
 // ── API CHECK ─────────────────────────────────
 async function checkApi() {
@@ -1237,7 +1017,6 @@ async function checkApi() {
   }
 }
 
-// ── YARDIMCILAR ───────────────────────────────
 function relTime(s) {
   if (!s) return '';
   const d=new Date(s),now=new Date(),diff=Math.floor((now-d)/60000);
@@ -1245,9 +1024,6 @@ function relTime(s) {
   if (diff<1440) return Math.floor(diff/60)+' saat önce';
   return Math.floor(diff/1440)+' gün önce';
 }
-
-function typeClass(t) { return t ? t.toLowerCase() : 'manhwa'; }
-
 function toast(msg,type='info') {
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+type;
