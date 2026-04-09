@@ -382,7 +382,8 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
                 <th>Kapak</th><th>Başlık</th><th>Tür</th><th>Kaynak</th>
                 <th>Bölüm</th><th>Durum</th><th>Türler</th><th>İşlem</th>
               </tr></thead>
-              <tbody id="serBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr></tbody>
+              <tbody id="serBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
+              </tbody>
             </table>
           </div>
           <div class="tbl-footer">
@@ -407,7 +408,8 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
                 <th>ID</th><th>Kullanıcı Adı</th><th>E-posta</th><th>Rol</th>
                 <th>Tamamlanan</th><th>Okuyulan</th><th>Durum</th><th>Kayıt</th><th>İşlem</th>
               </tr></thead>
-              <tbody id="userBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr></tbody>
+              <tbody id="userBody"><tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
+              </tbody>
             </table>
           </div>
           <div class="tbl-footer">
@@ -539,7 +541,8 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
           <div style="overflow-x:auto">
             <table class="tbl">
               <thead><tr><th>Zaman</th><th>Kaynak</th><th>Durum</th><th>Seri</th><th>Mesaj</th></tr></thead>
-              <tbody id="logBody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr></tbody>
+              <tbody id="logBody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Yükleniyor...</td></tr>
+              </tbody>
             </table>
           </div>
         </div>
@@ -640,7 +643,10 @@ body{background:var(--bg);color:var(--text);font-family:"Mulish",sans-serif;min-
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'https://web-production-49cce.up.railway.app/api';
+// ========== DÜZELTİLMİŞ API BAĞLANTISI ==========
+const API = '/api';
+// ================================================
+
 const PWD_KEY = 'vs_admin_pwd';
 const DEF_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
 const ALL_GENRES = ['Aksiyon','Fantazi','Macera','Romance','Korku','Gerilim','Komedi','Drama',
@@ -725,11 +731,9 @@ async function loadDashboard(){
   document.getElementById('dChaps').textContent=d.total_chapters>999?(d.total_chapters/1000).toFixed(1)+'K':(d.total_chapters||0);
   document.getElementById('dManhwa').textContent=d.manhwa||0;
 
-  // Kullanıcı sayısı
   const users=await apiFetch('/admin/users?limit=1');
   document.getElementById('dUsers').textContent=users?.total||'—';
 
-  // Kaynak istatistikleri
   const gb=await apiFetch('/search?source=golgebahcesi&limit=1');
   const rg=await apiFetch('/search?source=ragnarscans&limit=1');
   const gbN=gb?.count||0, rgN=rg?.count||0, total=(gbN+rgN)||1;
@@ -959,13 +963,10 @@ async function loadAppearance(){
   document.getElementById('primaryColor').value=d.primary_color||'#d4500a';
   document.getElementById('bgColorHex').value=d.bg_color||'#0d0805';
   document.getElementById('bgColor').value=d.bg_color||'#0d0805';
-  // Logo önizleme
   if(d.site_logo){
     document.getElementById('logoPreview').innerHTML=`<img src="${d.site_logo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`;
   }
-  // İsim önizleme
   updateNamePreview();
-  // Event listeners
   document.getElementById('primaryColor').oninput=e=>{document.getElementById('primaryColorHex').value=e.target.value;};
   document.getElementById('bgColor').oninput=e=>{document.getElementById('bgColorHex').value=e.target.value;};
   document.getElementById('nameColor').oninput=e=>{document.getElementById('nameColorHex').value=e.target.value;updateNamePreview();};
