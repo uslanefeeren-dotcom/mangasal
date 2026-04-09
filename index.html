@@ -6,6 +6,7 @@
 <title id="pageTitle">Mangasal</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+/* TÜM STİLLER AYNI - DEĞİŞMEDİ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--red:#d4500a;--gold:#e87c1e;--dark:#0d0805;--card:#150e08;--text:#e0e0e0;--muted:#888;--bdr:rgba(212,80,10,.15)}
 body{background:var(--dark);color:var(--text);font-family:'Mulish',sans-serif;min-height:100vh}
@@ -430,10 +431,14 @@ let currentUser=null, authToken=null;
 let siteSettings={};
 let slides=[], slideIdx=0, slideTimer=null;
 
-// Proxy ile resim URL'sini düzenle
+// Proxy ile resim URL'sini düzenle - HATA YÖNETİMİ EKLENDİ
 function proxyImage(url) {
   if (!url) return '';
   if (url.startsWith('data:') || url.startsWith('/')) return url;
+  // Eğer URL zaten proxy ile başlıyorsa tekrar ekleme
+  if (url.includes('/api/proxy/image')) return url;
+  // Geçerli bir HTTP/HTTPS URL'si değilse boş döndür
+  if (!url.startsWith('http')) return '';
   return `${API}/proxy/image?url=${encodeURIComponent(url)}`;
 }
 
@@ -445,7 +450,10 @@ async function get(ep, opts={}) {
     const r = await fetch(API+ep, {signal:AbortSignal.timeout(8000), headers, ...opts});
     if (!r.ok) throw new Error(r.status);
     return await r.json();
-  } catch(e) { return null; }
+  } catch(e) { 
+    console.error('API Error:', e);
+    return null; 
+  }
 }
 
 // ── SİTE AYARLARI ─────────────────────────────
