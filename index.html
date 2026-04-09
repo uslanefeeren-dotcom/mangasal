@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title id="pageTitle">Mangasal</title>
+<title>Mangasal</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -265,4 +265,775 @@ footer{border-top:1px solid var(--bdr);padding:32px 48px;display:flex;justify-co
     </div>
   </div>
   <div class="hero-content" style="position:relative;z-index:2">
-    <div class="hero-badge">🔥
+    <div class="hero-badge">🔥 Türkçe Manhwa & Manga</div>
+    <h1 id="heroTitle">Okumayı<br><span id="heroSubtitle">Seç.</span></h1>
+    <p id="heroDesc">Gölge Bahçesi ve Ragnar Scans serilerini tek platformda bulun.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('trendSec').scrollIntoView({behavior:'smooth'})">▶ Trend Serilere Git</button>
+      <button class="btn-secondary" onclick="showAllSeries()">Tüm Seriler</button>
+    </div>
+  </div>
+  <div class="hero-stats" style="position:absolute;right:48px;bottom:64px;z-index:2">
+    <div class="stat-item"><div class="stat-num" id="statSeries">—</div><div class="stat-label">Seri</div></div>
+    <div class="stat-item"><div class="stat-num" id="statChap">—</div><div class="stat-label">Bölüm</div></div>
+    <div class="stat-item"><div class="stat-num" id="statManhwa">—</div><div class="stat-label">Manhwa</div></div>
+  </div>
+  <div class="slider-dots" id="sliderDots"></div>
+  <div class="slider-arrows" id="sliderArrows" style="display:none">
+    <div class="slider-arrow" onclick="slideChange(-1)">‹</div>
+    <div class="slider-arrow" onclick="slideChange(1)">›</div>
+  </div>
+</div>
+
+<div class="section" id="trendSec">
+  <div class="section-header">
+    <div class="section-title" id="trendTitle">Trend Seriler</div>
+    <div class="section-line"></div>
+    <div class="section-more" onclick="loadTrend(true)">Tümünü Gör →</div>
+  </div>
+  <div class="manga-grid" id="trendGrid"><div class="loading">Yükleniyor</div></div>
+</div>
+
+<div class="section" style="padding-top:40px">
+  <div class="section-header">
+    <div class="section-title" id="latestTitle">Son Güncellenenler</div>
+    <div class="section-line"></div>
+    <div class="section-more" onclick="loadLatest(true)">Tümünü Gör →</div>
+  </div>
+  <div class="updates-wrap" id="latestGrid"><div class="loading">Yükleniyor</div></div>
+</div>
+
+<div class="section" style="padding-top:40px">
+  <div class="section-header">
+    <div class="section-title">Editörün Seçimi</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="featured-grid" id="featuredGrid">
+    <div class="featured-card"><div class="featured-placeholder">📖</div>
+      <div class="featured-overlay"><div><div class="featured-genre">Yükleniyor...</div><div class="featured-title">—</div></div></div>
+    </div>
+    <div class="featured-card"><div class="featured-placeholder">⚔️</div>
+      <div class="featured-overlay"><div><div class="featured-genre">Yükleniyor...</div><div class="featured-title">—</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top:40px;padding-bottom:0">
+  <div class="section-header">
+    <div class="section-title">Türler</div>
+    <div class="section-line"></div>
+  </div>
+</div>
+<div class="genre-row" id="genreRow">
+  <div class="genre-tag active" onclick="filterGenre('',this)">Tümü</div>
+</div>
+
+<footer>
+  <div class="footer-logo"><span id="footerSiteName">MANGASAL</span></div>
+  <div class="footer-copy" id="footerCopy">© 2025 Mangasal — Gölge Bahçesi + Ragnar Scans</div>
+</footer>
+
+<div class="modal-bg" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAuth()">✕</button>
+    <div class="modal-logo">MANGA<em>SAL</em></div>
+    <div class="modal-sub" id="authSubtitle">Giriş Yap</div>
+    <div class="modal-err" id="authErr"></div>
+    <div id="loginForm">
+      <label>E-posta</label>
+      <input type="email" id="loginEmail" placeholder="ornek@mail.com">
+      <label>Şifre</label>
+      <input type="password" id="loginPwd" placeholder="Şifreniz" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="modal-btn" onclick="doLogin()">Giriş Yap</button>
+      <div class="modal-switch">Hesabın yok mu? <a onclick="showRegister()">Kayıt Ol</a></div>
+    </div>
+    <div id="registerForm" style="display:none">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="regUser" placeholder="kullanici_adi">
+      <label>E-posta</label>
+      <input type="email" id="regEmail" placeholder="ornek@mail.com">
+      <label>Şifre</label>
+      <input type="password" id="regPwd" placeholder="En az 6 karakter" onkeydown="if(event.key==='Enter')doRegister()">
+      <button class="modal-btn" onclick="doRegister()">Kayıt Ol</button>
+      <div class="modal-switch">Hesabın var mı? <a onclick="showLogin()">Giriş Yap</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="profileModal">
+  <div class="modal profile-modal">
+    <button class="modal-close" onclick="closeProfile()">✕</button>
+    <div class="profile-header">
+      <div class="avatar-upload-wrap" onclick="triggerAvatarUpload()">
+        <div class="profile-avatar" id="profileAvatar">👤</div>
+        <div class="avatar-overlay">📷</div>
+      </div>
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+      <div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="roles-stack" id="profileRolesStack"></div>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px" id="profileEmail">—</div>
+      </div>
+    </div>
+    <div class="profile-stats">
+      <div class="ps"><div class="ps-n" id="profCompleted">0</div><div class="ps-l">Tamamlandı</div></div>
+      <div class="ps"><div class="ps-n" id="profReading">0</div><div class="ps-l">Okunuyor</div></div>
+    </div>
+    <div class="tab-bar">
+      <div class="tb on" onclick="showProfileTab('history',this)">Okuma Geçmişi</div>
+      <div class="tb" onclick="showProfileTab('favorites',this)">Favoriler</div>
+      <div class="tb" onclick="showProfileTab('edit',this)">Profil Düzenle</div>
+    </div>
+    <div id="profileTabHistory">
+      <div class="history-list" id="historyList"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div></div>
+    </div>
+    <div id="profileTabFavorites" style="display:none">
+      <div class="history-list" id="favoritesList"><div style="color:var(--muted);font-size:12px;text-align:center;padding:20px">Yükleniyor...</div></div>
+    </div>
+    <div id="profileTabEdit" style="display:none">
+      <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Kullanıcı Adı</label>
+      <input id="editUsername" style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:9px 12px;font-size:13px;font-family:'Mulish',sans-serif;border-radius:3px;outline:none;margin-bottom:12px">
+      <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Hakkımda</label>
+      <textarea id="editBio" rows="3" placeholder="Kendiniz hakkında birşeyler yazın..." style="width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:9px 12px;font-size:13px;font-family:'Mulish',sans-serif;border-radius:3px;outline:none;resize:vertical;margin-bottom:14px"></textarea>
+      <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px">Profil Fotoğrafı</label>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button onclick="triggerAvatarUpload()" style="background:rgba(212,80,10,.1);border:1px solid var(--bdr);color:var(--gold);padding:8px 14px;font-size:11px;font-weight:700;border-radius:3px;cursor:pointer">📷 Fotoğraf Seç</button>
+        <span style="font-size:11px;color:var(--muted);align-self:center">JPG, PNG, WebP (max 500KB)</span>
+      </div>
+      <button class="modal-btn" onclick="saveProfile()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div class="api-pill">
+  <div class="api-dot" id="apiDot"></div>
+  <span id="apiTxt">Kontrol...</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// API base URL - GÖRECELİ (Railway'de çalışır)
+const API = '/api';
+let curType='', curSource='', curGenre='', srchTimer=null, apiOk=false;
+let currentUser=null, authToken=null;
+let siteSettings={};
+let slides=[], slideIdx=0, slideTimer=null;
+
+// Proxy ile resim URL'sini düzenle
+function proxyImage(url) {
+  if (!url) return '';
+  if (url.startsWith('data:') || url.startsWith('/')) return url;
+  if (url.includes('/proxy/image')) return url;
+  return `${API}/proxy/image?url=${encodeURIComponent(url)}`;
+}
+
+// ── API ───────────────────────────────────────
+async function get(ep, opts={}) {
+  try {
+    const headers = {'Content-Type':'application/json'};
+    if (authToken) headers['Authorization'] = 'Bearer '+authToken;
+    const r = await fetch(API+ep, {signal:AbortSignal.timeout(8000), headers, ...opts});
+    if (!r.ok) throw new Error(r.status);
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+// ── SİTE AYARLARI ─────────────────────────────
+async function loadSiteSettings() {
+  const data = await get('/settings');
+  if (!data || !data.data) return;
+  const d = data.data;
+  siteSettings = d;
+  const p1 = d.site_name_part1 || 'MANGA';
+  const p2 = d.site_name_part2 || 'SAL';
+  const nc = d.name_color || '#d4500a';
+  const fullName = p1 + p2;
+  document.title = fullName;
+  document.getElementById('navSiteName').innerHTML = `${p1}<em style="color:${nc};font-style:normal">${p2}</em>`;
+  document.getElementById('footerSiteName').innerHTML = fullName;
+  document.getElementById('footerCopy').textContent = `© ${new Date().getFullYear()} ${fullName}`;
+  if (d.site_logo) {
+    const logoImg = document.createElement('img');
+    logoImg.src = proxyImage(d.site_logo);
+    logoImg.style.cssText = 'width:32px;height:32px;border-radius:8px;object-fit:cover';
+    const logoWrap = document.querySelector('.nav-logo');
+    if (logoWrap) {
+      const existing = logoWrap.querySelector('img');
+      if (existing) existing.replaceWith(logoImg);
+      else logoWrap.insertBefore(logoImg, logoWrap.firstChild);
+    }
+  }
+  if (d.hero_title)    document.getElementById('heroTitle').childNodes[0].textContent = d.hero_title+'\n';
+  if (d.hero_subtitle) document.getElementById('heroSubtitle').textContent = d.hero_subtitle;
+  if (d.hero_desc)     document.getElementById('heroDesc').textContent = d.hero_desc;
+  if (d.primary_color || d.bg_color) {
+    let css = ':root{';
+    if (d.primary_color) css += `--red:${d.primary_color};--gold:${d.primary_color};`;
+    if (d.bg_color)      css += `--dark:${d.bg_color};`;
+    css += '}';
+    if (d.bg_color) css += `body{background:${d.bg_color}!important}`;
+    const style = document.createElement('style');
+    style.id = 'dynamic-theme';
+    style.textContent = css;
+    document.getElementById('dynamic-theme')?.remove();
+    document.head.appendChild(style);
+  }
+  const banners = Array.isArray(d.hero_banners) ? d.hero_banners : [];
+  initSlider(banners);
+}
+
+function initSlider(banners) {
+  const validBanners = banners.filter(b => b.image_url);
+  if (!validBanners.length) {
+    document.getElementById('sliderDots').style.display = 'none';
+    return;
+  }
+  slides = validBanners;
+  slideIdx = 0;
+  const slidesWrap = document.getElementById('heroSlides');
+  slidesWrap.innerHTML = '';
+  slides.forEach((b, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-slide';
+    slide.style.cssText = 'flex-shrink:0;width:100%;height:100%;position:relative;overflow:hidden';
+    slide.innerHTML = `
+      <div class="hero-slide-bg" style="position:absolute;inset:0;background-image:url('${proxyImage(b.image_url)}');background-size:cover;background-position:center"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-glow"></div>
+      <div class="hero-slide-overlay"></div>
+      <div class="hero-slide-overlay2"></div>`;
+    slidesWrap.appendChild(slide);
+  });
+  const dotsWrap = document.getElementById('sliderDots');
+  dotsWrap.innerHTML = slides.map((_, i) =>
+    `<div class="slider-dot${i===0?' on':''}" onclick="goSlide(${i})"></div>`
+  ).join('');
+  if (slides.length > 1) {
+    document.getElementById('sliderArrows').style.display = 'flex';
+    startSlideTimer();
+  }
+  goSlide(0);
+}
+
+function goSlide(idx) {
+  if (!slides.length) return;
+  slideIdx = (idx + slides.length) % slides.length;
+  const wrap = document.getElementById('heroSlides');
+  wrap.style.transition = 'transform .5s ease';
+  wrap.style.transform = `translateX(-${slideIdx * 100}%)`;
+  document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('on', i===slideIdx));
+  const b = slides[slideIdx];
+  if (b.title)    document.getElementById('heroTitle').childNodes[0].textContent = b.title+'\n';
+  if (b.subtitle) document.getElementById('heroSubtitle').textContent = b.subtitle;
+}
+
+function slideChange(dir) {
+  clearTimeout(slideTimer);
+  goSlide(slideIdx + dir);
+  startSlideTimer();
+}
+
+function startSlideTimer() {
+  clearTimeout(slideTimer);
+  if (slides.length > 1) {
+    slideTimer = setInterval(() => goSlide(slideIdx + 1), 5000);
+  }
+}
+
+// ── AUTH ──────────────────────────────────────
+function loadAuth() {
+  authToken = localStorage.getItem('vs_token');
+  if (authToken) checkSession();
+  else renderNavGuest();
+}
+
+async function checkSession() {
+  const data = await get('/auth/me');
+  if (data && data.status === 'ok') {
+    currentUser = data.user;
+    renderNavUser();
+  } else {
+    authToken = null;
+    localStorage.removeItem('vs_token');
+    renderNavGuest();
+  }
+}
+
+function renderNavGuest() {
+  document.getElementById('navAuthArea').innerHTML = `<button class="nav-btn" onclick="openAuth()">Giriş Yap</button>`;
+}
+
+function renderNavUser() {
+  const u = currentUser;
+  const roleCls = 'role-'+(u.role||'Yeni');
+  const initial = (u.username||'?')[0].toUpperCase();
+  const avatarHtml = u.avatar_url ? `<img src="${proxyImage(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initial;
+  document.getElementById('navAuthArea').innerHTML = `
+    <div class="user-menu-wrap">
+      <div class="user-avatar" onclick="toggleUserMenu()" id="userAvatarBtn">${avatarHtml}</div>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="ud-header">
+          <div class="ud-name">${u.username}</div>
+          <div class="ud-role ${roleCls}">${u.custom_role||u.role||'Yeni'}</div>
+        </div>
+        <div class="ud-item" onclick="openProfile()">👤 Profilim</div>
+        <div class="ud-item" onclick="openProfile();setTimeout(()=>showProfileTab('history',null),100)">📖 Okuma Geçmişim</div>
+        ${u.role==='Admin'?'<div class="ud-item" onclick="window.open(\'admin.html\')">⚙️ Admin Panel</div>':''}
+        <div class="ud-divider"></div>
+        <div class="ud-item danger" onclick="doLogout()">🚪 Çıkış Yap</div>
+      </div>
+    </div>`;
+}
+
+function toggleUserMenu() { document.getElementById('userDropdown')?.classList.toggle('open'); }
+document.addEventListener('click', e => { if (!e.target.closest('.user-menu-wrap')) document.getElementById('userDropdown')?.classList.remove('open'); });
+
+function openAuth() { showLogin(); document.getElementById('authModal').classList.add('open'); }
+function closeAuth() { document.getElementById('authModal').classList.remove('open'); clearAuthErr(); }
+function showLogin() { document.getElementById('authSubtitle').textContent = 'Giriş Yap'; document.getElementById('loginForm').style.display = ''; document.getElementById('registerForm').style.display = 'none'; clearAuthErr(); }
+function showRegister() { document.getElementById('authSubtitle').textContent = 'Kayıt Ol'; document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = ''; clearAuthErr(); }
+function clearAuthErr() { const e=document.getElementById('authErr'); e.style.display='none'; e.textContent=''; }
+function showAuthErr(msg) { const e=document.getElementById('authErr'); e.textContent=msg; e.style.display='block'; }
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd   = document.getElementById('loginPwd').value;
+  if (!email||!pwd) { showAuthErr('Tüm alanları doldurun'); return; }
+  const r = await get('/auth/login', {method:'POST', body:JSON.stringify({email,password:pwd})});
+  if (!r) { showAuthErr('Sunucu hatası'); return; }
+  if (r.status !== 'ok') { showAuthErr(r.message||'Hata'); return; }
+  authToken = r.token;
+  currentUser = r.user;
+  localStorage.setItem('vs_token', authToken);
+  closeAuth();
+  renderNavUser();
+  toast('Hoş geldin, '+r.user.username+'! 👋','success');
+}
+
+async function doRegister() {
+  const username = document.getElementById('regUser').value.trim();
+  const email    = document.getElementById('regEmail').value.trim();
+  const pwd      = document.getElementById('regPwd').value;
+  if (!username||!email||!pwd) { showAuthErr('Tüm alanları doldurun'); return; }
+  const r = await get('/auth/register', {method:'POST', body:JSON.stringify({username,email,password:pwd})});
+  if (!r) { showAuthErr('Sunucu hatası'); return; }
+  if (r.status !== 'ok') { showAuthErr(r.message||'Hata'); return; }
+  authToken = r.token;
+  localStorage.setItem('vs_token', authToken);
+  const me = await get('/auth/me');
+  if (me && me.status==='ok') currentUser = me.user;
+  closeAuth();
+  renderNavUser();
+  toast('Kayıt başarılı! Hoş geldin 🎉','success');
+}
+
+async function doLogout() {
+  await get('/auth/logout', {method:'POST'});
+  authToken = null; currentUser = null;
+  localStorage.removeItem('vs_token');
+  renderNavGuest();
+  toast('Çıkış yapıldı','info');
+}
+
+// ── PROFİL ───────────────────────────────────
+async function openProfile() {
+  if (!currentUser) { openAuth(); return; }
+  document.getElementById('userDropdown')?.classList.remove('open');
+  const u = currentUser;
+  const avatarEl = document.getElementById('profileAvatar');
+  if (u.avatar_url) {
+    avatarEl.innerHTML = `<img src="${proxyImage(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    avatarEl.textContent = u.username[0].toUpperCase();
+    avatarEl.style.fontSize = '24px';
+  }
+  document.getElementById('profileName').textContent = u.username;
+  renderRolesStack(u);
+  document.getElementById('profileEmail').textContent = u.email;
+  document.getElementById('profCompleted').textContent = u.completed_count || 0;
+  document.getElementById('profReading').textContent   = u.reading_count   || 0;
+  document.getElementById('editUsername').value = u.username;
+  document.getElementById('editBio').value = u.bio || '';
+  document.getElementById('profileModal').classList.add('open');
+  showProfileTab('history', null);
+  loadHistory();
+}
+
+function triggerAvatarUpload() { document.getElementById('avatarFileInput').click(); }
+async function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 512000) { toast('Resim çok büyük! Max 500KB','error'); return; }
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64 = e.target.result;
+    const r = await get('/user/avatar', {method:'POST', body:JSON.stringify({avatar_url:base64})});
+    if (r && r.status==='ok') {
+      currentUser.avatar_url = base64;
+      const avatarEl = document.getElementById('profileAvatar');
+      avatarEl.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      renderNavUser();
+      toast('Profil fotoğrafı güncellendi ✓','success');
+    } else toast('Yükleme başarısız!','error');
+  };
+  reader.readAsDataURL(file);
+}
+function closeProfile() { document.getElementById('profileModal').classList.remove('open'); }
+function showProfileTab(name, btn) {
+  document.getElementById('profileTabHistory').style.display   = name==='history'   ? '' : 'none';
+  document.getElementById('profileTabFavorites').style.display = name==='favorites' ? '' : 'none';
+  document.getElementById('profileTabEdit').style.display      = name==='edit'      ? '' : 'none';
+  document.querySelectorAll('.tb').forEach(t=>t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  else {
+    const tabs = document.querySelectorAll('.tb');
+    const idx = name==='history'?0:name==='favorites'?1:2;
+    if (tabs[idx]) tabs[idx].classList.add('on');
+  }
+  if (name==='favorites') loadFavorites();
+}
+
+async function loadFavorites() {
+  const list = document.getElementById('favoritesList');
+  list.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px">Yükleniyor...</div>';
+  const data = await get('/user/favorites');
+  if (!data || !data.data || !data.data.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px">Henüz favori seri yok</div>';
+    return;
+  }
+  list.innerHTML = data.data.map(f => `
+    <div class="hist-item" onclick="openUrl('${f.series_url}');closeProfile()">
+      <div class="hist-thumb">${f.series_cover ? `<img src="${proxyImage(f.series_cover)}" onerror="this.style.display='none'">` : '⭐'}</div>
+      <div class="hist-info"><div class="hist-title">${f.series_title||'—'}</div><div class="hist-chap">${f.series_type||'Manhwa'}</div></div>
+      <span style="font-size:18px;cursor:pointer" onclick="event.stopPropagation();removeFavorite('${f.series_url}')">🗑️</span>
+    </div>`).join('');
+}
+
+async function toggleFavorite(url, title, cover, type, btn) {
+  if (!authToken) { openAuth(); return; }
+  const r = await get('/user/favorites', {method:'POST', body:JSON.stringify({series_url: url, series_title: title, series_cover: cover, series_type: type})});
+  if (!r) return;
+  if (r.action === 'added') { btn.textContent = '💛'; toast('Favorilere eklendi ✓','success'); }
+  else { btn.textContent = '⭐'; toast('Favoriden kaldırıldı','info'); }
+}
+
+async function removeFavorite(url) {
+  await get('/user/favorites', {method:'POST', body:JSON.stringify({series_url:url})});
+  loadFavorites();
+  toast('Favoriden kaldırıldı','info');
+}
+
+async function loadHistory() {
+  const list = document.getElementById('historyList');
+  list.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px">Yükleniyor...</div>';
+  const data = await get('/user/progress');
+  if (!data || !data.data || !data.data.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px">Henüz okunan seri yok</div>';
+    return;
+  }
+  list.innerHTML = data.data.map(p => `
+    <div class="hist-item" onclick="openUrl('${p.series_url}')">
+      <div class="hist-thumb">${p.series_cover ? `<img src="${proxyImage(p.series_cover)}" onerror="this.style.display='none'">` : '📖'}</div>
+      <div class="hist-info"><div class="hist-title">${p.series_title||'—'}</div><div class="hist-chap">${p.last_chapter_num||'Başlanmadı'}</div></div>
+      <span class="hist-status ${p.status||'reading'}">${p.status==='completed'?'Tamamlandı':'Okunuyor'}</span>
+    </div>`).join('');
+}
+
+async function saveProfile() {
+  const r = await get('/user/profile', {method:'POST', body:JSON.stringify({username: document.getElementById('editUsername').value, bio: document.getElementById('editBio').value})});
+  if (r && r.status==='ok') {
+    const me = await get('/auth/me');
+    if (me && me.status==='ok') { currentUser=me.user; renderNavUser(); }
+    renderRolesStack(currentUser);
+    toast('Profil güncellendi ✓','success');
+  } else toast('Hata!','error');
+}
+
+function renderRolesStack(u) {
+  const wrap = document.getElementById('profileRolesStack');
+  if (!wrap) return;
+  const earned = Array.isArray(u.roles_earned) ? u.roles_earned : [u.role||'Yeni'];
+  let html = '';
+  earned.forEach(r => { html += `<span class="role-badge role-badge-${r}">${r}</span>`; });
+  if (u.custom_role) html += `<span class="role-badge role-badge-custom">+ ${u.custom_role}</span>`;
+  wrap.innerHTML = html;
+}
+
+// ── İSTATİSTİKLER ─────────────────────────────
+async function loadStats() {
+  const data = await get('/stats');
+  if (!data||!data.data) return;
+  const d = data.data;
+  document.getElementById('statSeries').textContent  = d.total_series||'—';
+  document.getElementById('statChap').textContent    = d.total_chapters>999?Math.round(d.total_chapters/1000)+'K+':d.total_chapters||'—';
+  document.getElementById('statManhwa').textContent  = d.manhwa||'—';
+  document.getElementById('tbManhwa').textContent    = d.manhwa||'—';
+  document.getElementById('tbManga').textContent     = d.manga||'—';
+  document.getElementById('tbManhua').textContent    = d.manhua||'—';
+}
+
+// ── TREND ─────────────────────────────────────
+async function loadTrend(more=false) {
+  const limit = more ? 200 : 6;
+  const p = new URLSearchParams({limit});
+  if (curType)   p.set('type',   curType);
+  if (curSource) p.set('source', curSource);
+  if (curGenre)  p.set('genre',  curGenre);
+  const grid = document.getElementById('trendGrid');
+  grid.innerHTML = '<div class="loading">Yükleniyor</div>';
+  const data = await get('/trending?'+p);
+  if (!data||!data.data||!data.data.length) {
+    grid.innerHTML = curType||curGenre ? '<div class="empty">Bu filtrede seri bulunamadı</div>' : renderTrendDemo();
+    return;
+  }
+  grid.style.gridTemplateColumns = 'repeat(6,1fr)';
+  grid.innerHTML = '';
+  data.data.forEach((s,i) => {
+    const tc = (s.content_type||'manhwa').toLowerCase();
+    const badge = i===0?'<div class="manga-badge">HOT</div>':i===1?'<div class="manga-badge gold">TOP</div>':i<5?'<div class="manga-badge new">YENİ</div>':'';
+    const genres = (s.genres||[]).slice(0,2).join(' • ');
+    const favBtn = authToken ? `<button class="fav-btn" onclick="event.stopPropagation();toggleFavorite('${s.url}','${s.title.replace(/'/g,"\\'")}','${s.cover_url||''}','${s.content_type||'Manhwa'}',this)" title="Favorilere Ekle">⭐</button>` : '';
+    grid.innerHTML += `
+      <div class="manga-card" onclick="openUrl('${s.url}')">
+        ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" alt="${s.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+        <div class="manga-card-placeholder" style="display:${s.cover_url?'none':'flex'}">📖</div>
+        ${favBtn}
+        ${badge}
+        <div class="manga-type ${tc}">${s.content_type||'Manhwa'}</div>
+        <div class="manga-rank">${i+1}</div>
+        <div class="manga-overlay"></div>
+        <div class="manga-info">
+          <div class="manga-title">${s.title}</div>
+          <div class="manga-meta">${s.latest_chapter||'—'}${genres?' • '+genres:''}</div>
+        </div>
+      </div>`;
+  });
+  updateFeatured(data.data.slice(0,2));
+}
+
+function renderTrendDemo() {
+  const demo=[
+    {title:'Solo Leveling',ep:'Böl. 179',t:'Manhwa',icon:'⚔️',b:'hot'},
+    {title:'Omniscient Reader',ep:'Böl. 143',t:'Manhwa',icon:'📖',b:'gold'},
+    {title:'Tower of God',ep:'Böl. 598',t:'Manhwa',icon:'🗼',b:'new'},
+    {title:'Nano Machine',ep:'Böl. 210',t:'Manhwa',icon:'🌑',b:''},
+    {title:'Sweet Home',ep:'S3 Böl. 75',t:'Manhwa',icon:'👁️',b:''},
+    {title:'TBATE',ep:'Böl. 177',t:'Manhwa',icon:'🌿',b:''},
+  ];
+  const grid = document.getElementById('trendGrid');
+  grid.innerHTML = '';
+  demo.forEach((s,i)=>{
+    const badge = s.b==='hot'?'<div class="manga-badge">HOT</div>':s.b==='gold'?'<div class="manga-badge gold">TOP</div>':s.b==='new'?'<div class="manga-badge new">YENİ</div>':'';
+    grid.innerHTML += `<div class="manga-card"><div class="manga-card-placeholder" style="font-size:42px">${s.icon}</div>${badge}<div class="manga-type manhwa">${s.t}</div><div class="manga-rank">${i+1}</div><div class="manga-overlay"></div><div class="manga-info"><div class="manga-title">${s.title}</div><div class="manga-meta">${s.ep}</div></div></div>`;
+  });
+}
+
+// ── YENİ EKLENENLER ───────────────────────────
+async function loadLatest(more=false) {
+  const limit = more ? 200 : 10;
+  const p = new URLSearchParams({limit});
+  if (curType)   p.set('type',   curType);
+  if (curSource) p.set('source', curSource);
+  if (curGenre)  p.set('genre',  curGenre);
+  const grid = document.getElementById('latestGrid');
+  grid.innerHTML = '<div class="loading">Yükleniyor</div>';
+  const data = await get('/latest?'+p);
+  if (!data||!data.data||!data.data.length) {
+    if (curType||curGenre) grid.innerHTML = '<div class="empty">Bu filtrede seri bulunamadı</div>';
+    else renderLatestDemo();
+    return;
+  }
+  grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+  grid.innerHTML = '';
+  data.data.forEach(s => {
+    const tc = (s.content_type||'manhwa').toLowerCase();
+    const src = s.source==='golgebahcesi' ? 'Gölge Bahçesi' : s.source==='ragnarscans' ? 'Ragnar Scans' : s.source;
+    const genres = (s.genres||[]).slice(0,3).join(', ');
+    const t = relTime(s.last_updated);
+    grid.innerHTML += `
+      <div class="upd-item" onclick="openUrl('${s.url}')">
+        <div class="upd-thumb">${s.cover_url?`<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none'">` : '<span>📖</span>'}</div>
+        <div class="upd-info">
+          <div class="upd-title">${s.title}</div>
+          <div class="upd-sub">${src} • ${s.status||'Devam Ediyor'}</div>
+          <div class="upd-genres">${genres}</div>
+        </div>
+        <div class="upd-right">
+          <div class="upd-ep">${s.latest_chapter||'—'}</div>
+          <div class="upd-time">${t}</div>
+          <div class="upd-type ${tc}">${s.content_type||'Manhwa'}</div>
+        </div>
+      </div>`;
+  });
+}
+
+function renderLatestDemo() {
+  const demo=[
+    {title:'God of High School',ep:'Böl. 566',t:'Manhwa',icon:'⚡',src:'Gölge Bahçesi',time:'2 saat önce',genres:'Dövüş, Aksiyon'},
+    {title:'Eleceed',ep:'Böl. 263',t:'Manhwa',icon:'🌊',src:'Gölge Bahçesi',time:'5 saat önce',genres:'Aksiyon, Komedi'},
+    {title:'Noblesse',ep:'Böl. 544',t:'Manhwa',icon:'💀',src:'Ragnar Scans',time:'1 gün önce',genres:'Fantazi, Aksiyon'},
+    {title:'Hardcore LW',ep:'Böl. 299',t:'Manhwa',icon:'🔮',src:'Gölge Bahçesi',time:'1 gün önce',genres:'Oyun, Aksiyon'},
+    {title:'Dragon Raja',ep:'Böl. 120',t:'Manhua',icon:'🐉',src:'Ragnar Scans',time:'2 gün önce',genres:'Fantazi, Macera'},
+    {title:'Distant Sky',ep:'Böl. 88',t:'Manga',icon:'🌙',src:'Gölge Bahçesi',time:'3 gün önce',genres:'Gerilim'},
+  ];
+  const grid = document.getElementById('latestGrid');
+  grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+  grid.innerHTML = '';
+  demo.forEach(s=>{
+    const tc=s.t.toLowerCase();
+    grid.innerHTML+=`<div class="upd-item"><div class="upd-thumb" style="font-size:18px;justify-content:center">${s.icon}</div><div class="upd-info"><div class="upd-title">${s.title}</div><div class="upd-sub">${s.src} • Devam Ediyor</div><div class="upd-genres">${s.genres}</div></div><div class="upd-right"><div class="upd-ep">${s.ep}</div><div class="upd-time">${s.time}</div><div class="upd-type ${tc}">${s.t}</div></div></div>`;
+  });
+}
+
+function updateFeatured(series) {
+  if (!series||series.length<2) return;
+  const grid = document.getElementById('featuredGrid');
+  grid.innerHTML = '';
+  series.slice(0,2).forEach(s=>{
+    const genres = (s.genres||[]).slice(0,2).join(' • ');
+    grid.innerHTML += `
+      <div class="featured-card" onclick="openUrl('${s.url}')">
+        ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" alt="${s.title}">` : '<div class="featured-placeholder">📖</div>'}
+        <div class="featured-overlay">
+          <div>
+            <div class="featured-genre">${genres||'Manhwa'}</div>
+            <div class="featured-title">${s.title}</div>
+            <div class="featured-desc">${(s.description||'').slice(0,90)+'...'}</div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── TÜRLER ────────────────────────────────────
+async function loadGenres() {
+  const data = await get('/genres');
+  if (!data||!data.data) return;
+  const row = document.getElementById('genreRow');
+  row.innerHTML = '<div class="genre-tag active" onclick="filterGenre(\'\',this)">Tümü</div>';
+  data.data.slice(0,20).forEach(g=>{
+    row.innerHTML += `<div class="genre-tag" onclick="filterGenre('${g.genre}',this)">${g.genre}</div>`;
+  });
+}
+
+// ── FİLTRELEME ────────────────────────────────
+function filterType(type) {
+  curType = type; curGenre = '';
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['','Manhwa','Manga','Manhua'][i]===type));
+  document.getElementById('trendTitle').textContent  = type?type+' Trend':'Trend Seriler';
+  document.getElementById('latestTitle').textContent = type?'Yeni '+type:'Son Güncellenenler';
+  loadTrend(); loadLatest();
+}
+function filterSource(src, btn) {
+  curSource = src;
+  document.querySelectorAll('.src-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadTrend(); loadLatest();
+}
+function filterGenre(genre, btn) {
+  curGenre = genre;
+  document.querySelectorAll('.genre-tag').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('trendTitle').textContent  = genre?genre+' — Trend':'Trend Seriler';
+  document.getElementById('latestTitle').textContent = genre?genre+' — Yeni':'Son Güncellenenler';
+  loadTrend(); loadLatest();
+}
+
+async function showAllSeries() {
+  const grid = document.getElementById('trendGrid');
+  document.getElementById('trendTitle').textContent = 'Tüm Seriler';
+  grid.innerHTML = '<div class="loading">Yükleniyor</div>';
+  const p = new URLSearchParams({limit:200});
+  if (curType)   p.set('type',   curType);
+  if (curSource) p.set('source', curSource);
+  if (curGenre)  p.set('genre',  curGenre);
+  const data = await get('/trending?'+p);
+  if (!data||!data.data||!data.data.length){grid.innerHTML='<div class="empty">Bulunamadı</div>';return;}
+  grid.style.gridTemplateColumns = 'repeat(6,1fr)';
+  grid.innerHTML = '';
+  data.data.forEach((s,i)=>{
+    const tc=(s.content_type||'manhwa').toLowerCase();
+    const genres=(s.genres||[]).slice(0,2).join(' • ');
+    grid.innerHTML+=`<div class="manga-card" onclick="openUrl('${s.url}')">
+      ${s.cover_url?`<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+      <div class="manga-card-placeholder" style="display:${s.cover_url?'none':'flex'}">📖</div>
+      <div class="manga-type ${tc}">${s.content_type||'Manhwa'}</div>
+      <div class="manga-overlay"></div>
+      <div class="manga-info"><div class="manga-title">${s.title}</div><div class="manga-meta">${s.latest_chapter||'—'}${genres?' • '+genres:''}</div></div>
+    </div>`;
+  });
+  document.getElementById('trendSec').scrollIntoView({behavior:'smooth'});
+}
+
+// ── ARAMA ─────────────────────────────────────
+function closeSearch() { const dd = document.getElementById('searchDropdown'); if (dd) dd.classList.remove('open'); }
+function handleSearch(q) {
+  clearTimeout(srchTimer);
+  const dd = document.getElementById('searchDropdown');
+  if (!q || q.length < 1) { closeSearch(); return; }
+  srchTimer = setTimeout(async () => {
+    const data = await get('/search?q=' + encodeURIComponent(q) + '&limit=8');
+    if (!data || !data.data) return;
+    dd.innerHTML = '';
+    if (!data.data.length) {
+      dd.innerHTML = '<div class="sdrop-empty">Sonuç bulunamadı</div>';
+    } else {
+      data.data.forEach(s => {
+        const tc = (s.content_type||'manhwa').toLowerCase();
+        const src = s.source === 'golgebahcesi' ? 'Gölge Bahçesi' : s.source === 'ragnarscans' ? 'Ragnar Scans' : s.source;
+        dd.innerHTML += `
+          <div class="sdrop-item" onmousedown="openUrl('${s.url}')">
+            <div class="sdrop-thumb">${s.cover_url ? `<img src="${proxyImage(s.cover_url)}" onerror="this.style.display='none'">` : '📖'}</div>
+            <div class="sdrop-info"><div class="sdrop-title">${s.title}</div><div class="sdrop-meta">${src} · ${s.latest_chapter||'—'}</div></div>
+            <div class="sdrop-type ${tc}">${s.content_type||'Manhwa'}</div>
+          </div>`;
+      });
+    }
+    dd.classList.add('open');
+  }, 200);
+}
+
+function openUrl(url) { if (!url) return; window.location.href = 'reader.html?series='+encodeURIComponent(url); }
+
+// ── API CHECK ─────────────────────────────────
+async function checkApi() {
+  const dot=document.getElementById('apiDot'),txt=document.getElementById('apiTxt');
+  const data=await get('/stats');
+  if(data&&data.status==='ok'){
+    apiOk=true; dot.className='api-dot on';
+    txt.textContent='Online — '+(data.data.total_series||0)+' seri';
+  } else {
+    apiOk=false; dot.className='api-dot off';
+    txt.textContent='Offline — Demo';
+  }
+}
+
+function relTime(s) {
+  if (!s) return '';
+  const d=new Date(s),now=new Date(),diff=Math.floor((now-d)/60000);
+  if (diff<60) return diff+' dk önce';
+  if (diff<1440) return Math.floor(diff/60)+' saat önce';
+  return Math.floor(diff/1440)+' gün önce';
+}
+function toast(msg,type='info') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── BAŞLAT ────────────────────────────────────
+(async function(){
+  loadAuth();
+  await loadSiteSettings();
+  await checkApi();
+  loadStats();
+  loadTrend();
+  loadLatest();
+  loadGenres();
+  setInterval(checkApi, 5*60*1000);
+  setInterval(()=>{ if(apiOk){ loadTrend(); loadLatest(); } }, 2*60*1000);
+})();
+</script>
+</body>
+</html>
