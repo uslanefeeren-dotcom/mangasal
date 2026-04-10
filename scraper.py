@@ -31,11 +31,21 @@ SOURCES = {
 }
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
-    "Accept-Language": "tr-TR,tr;q=0.9",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Cache-Control": "max-age=0",
 }
 
-DB       = "voidscans.db"
+# DB yolu mutlak yapıldı (Railway'de çalışma dizini sorununu önler)
+DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "voidscans.db")
 INTERVAL = 2
 DELAY    = 1.0
 
@@ -654,10 +664,12 @@ Thread(target=scheduler, daemon=True).start()
 def home():
     return send_from_directory('.', 'index.html')
 
+@app.route('/reader')
 @app.route('/reader.html')
 def reader_page():
     return send_from_directory('.', 'reader.html')
 
+@app.route('/admin')
 @app.route('/admin.html')
 def admin_page():
     return send_from_directory('.', 'admin.html')
@@ -834,7 +846,7 @@ def clear_db():
     c.close()
     return jsonify({"status":"ok","message":"Veritabanı temizlendi"})
 
-# ─── KULLANICI SİSTEMİ (kısa) ──────────────────
+# ─── KULLANICI SİSTEMİ ─────────────────────────
 def hash_pwd(pwd): return hashlib.sha256(pwd.encode()).hexdigest()
 def gen_token():   return secrets.token_hex(32)
 
@@ -1048,7 +1060,7 @@ def upload_avatar():
     c.commit(); c.close()
     return jsonify({"status":"ok"})
 
-# ADMIN API (kısa)
+# ADMIN API
 @app.route("/api/admin/users")
 @require_admin
 def admin_users():
