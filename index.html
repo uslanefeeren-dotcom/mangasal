@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mangasal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Mulish:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#d4500a;--dark:#0d0805;--card:#150e08;--text:#e0e0e0;--muted:#888;--bdr:rgba(212,80,10,.15)}
+body{background:var(--dark);color:var(--text);font-family:'Mulish',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0d0805}::-webkit-scrollbar-thumb{background:#6b2800;border-radius:3px}
+nav{display:flex;align-items:center;gap:24px;padding:0 32px;height:60px;background:rgba(13,8,5,.97);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:200}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#fff;text-decoration:none;flex-shrink:0}
+.logo em{color:var(--red);font-style:normal}
+.nav-links{display:flex;gap:20px;list-style:none;flex:1}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s}
+.nav-links a:hover,.nav-links a.act{color:#fff}
+.sw{position:relative}
+.sw input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:8px 14px 8px 36px;font-size:12px;border-radius:4px;outline:none;width:220px;font-family:'Mulish',sans-serif;transition:.2s}
+.sw input:focus{border-color:rgba(212,80,10,.5)}
+.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
+.sdrop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1a0e08;border:1px solid rgba(212,80,10,.4);border-radius:4px;z-index:9999;max-height:340px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+.sdrop.open{display:block}
+.si-item{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:.1s}
+.si-item:hover{background:rgba(212,80,10,.12)}
+.si-thumb{width:30px;height:42px;border-radius:3px;background:#150e08;object-fit:cover;flex-shrink:0}
+.si-t{font-size:12px;font-weight:700;color:#fff}
+.si-m{font-size:10px;color:var(--muted);margin-top:1px}
+.si-empty{padding:14px;text-align:center;color:var(--muted);font-size:11px}
+.hero{background:linear-gradient(180deg,rgba(212,80,10,.07) 0%,transparent 100%);border-bottom:1px solid var(--bdr);padding:40px 32px 32px;text-align:center}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:4px;color:#fff;margin-bottom:8px}
+.hero h1 em{color:var(--red);font-style:normal}
+.hero p{color:var(--muted);font-size:13px;max-width:440px;margin:0 auto}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px}
+.frow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.flbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px}
+.fb{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Mulish',sans-serif}
+.fb:hover{background:rgba(212,80,10,.12);color:var(--red);border-color:rgba(212,80,10,.3)}
+.fb.act{background:rgba(212,80,10,.2);color:var(--red);border-color:var(--red)}
+.shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff}
+.scnt{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:6px;overflow:hidden;cursor:pointer;transition:.2s;text-decoration:none;display:block}
+.card:hover{border-color:rgba(212,80,10,.4);transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.cimg{width:100%;aspect-ratio:2/3;object-fit:cover;background:#0d0805;display:block}
+.cph{width:100%;aspect-ratio:2/3;background:#150e08;display:flex;align-items:center;justify-content:center;font-size:30px}
+.cbody{padding:8px 10px}
+.ctitle{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.cmeta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lmore{display:block;width:100%;margin-top:24px;padding:12px;background:rgba(212,80,10,.1);color:var(--red);border:1px solid rgba(212,80,10,.3);border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Mulish',sans-serif;transition:.2s;letter-spacing:1px}
+.lmore:hover{background:rgba(212,80,10,.2)}
+.loading-msg{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+.spin{width:32px;height:32px;border:3px solid rgba(212,80,10,.2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{text-align:center;padding:28px;color:var(--muted);font-size:11px;border-top:1px solid var(--bdr);margin-top:40px}
+@media(max-width:600px){
+  nav{padding:0 16px;gap:12px}.nav-links{display:none}.sw input{width:160px}
+  .hero{padding:28px 16px 22px}.hero h1{font-size:36px}
+  .main{padding:18px 12px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">MANGA<em>SAL</em></a>
+  <ul class="nav-links">
+    <li><a class="act" onclick="setSource('',this)">Tümü</a></li>
+    <li><a onclick="setSource('golgebahcesi',this)">Gölge Bahçesi</a></li>
+    <li><a onclick="setSource('ragnarscans',this)">Ragnar Scans</a></li>
+  </ul>
+  <div class="sw">
+    <span class="si">🔍</span>
+    <input id="q" type="text" placeholder="Seri ara..." autocomplete="off"
+      oninput="doSearch(this.value)" onfocus="showDrop()" onblur="setTimeout(hideDrop,200)">
+    <div class="sdrop" id="sdrop"></div>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>MANGA<em>SAL</em></h1>
+  <p>Gölge Bahçesi ve Ragnar Scans serilerini keşfedin. Bölüme tıklayın, orijinal sitede okuyun.</p>
+</div>
+
+<div class="main">
+  <div class="frow" id="gf"><span class="flbl">Tür:</span><button class="fb act" onclick="setGenre('',this)">Tümü</button></div>
+  <div class="shdr"><span class="stitle">SERİLER</span><span class="scnt" id="cnt"></span></div>
+  <div class="grid" id="grid"><div class="loading-msg"><div class="spin"></div><p style="margin-top:12px">Yükleniyor...</p></div></div>
+  <button class="lmore" id="lmore" style="display:none" onclick="loadMore()">DAHA FAZLA</button>
+</div>
+
+<footer>Mangasal — Gölge Bahçesi &amp; Ragnar Scans Rehberi</footer>
+
+<script>
+const API='/api';
+let ALL=[],FILT=[],vis=48,aGenre='',aSrc='';
+
+async function init(){
+  try{
+    const [a,b]=await Promise.all([
+      fetch(API+'/trending?limit=200').then(r=>r.json()),
+      fetch(API+'/latest?limit=200').then(r=>r.json())
+    ]);
+    const seen=new Set();
+    ALL=[];
+    for(const s of [...(a.data||[]),...(b.data||[])]){
+      if(!seen.has(s.url)){seen.add(s.url);ALL.push(s);}
+    }
+    buildGenres();
+    applyF();
+  }catch(e){
+    document.getElementById('grid').innerHTML='<div class="loading-msg">Yüklenemedi. Sayfayı yenileyin.</div>';
+  }
+}
+
+function buildGenres(){
+  const cnt={};
+  ALL.forEach(s=>(s.genres||[]).forEach(g=>{cnt[g]=(cnt[g]||0)+1;}));
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,12).map(e=>e[0]);
+  document.getElementById('gf').innerHTML='<span class="flbl">Tür:</span>'
+    +'<button class="fb act" onclick="setGenre(\'\',this)">Tümü</button>'
+    +top.map(g=>`<button class="fb" onclick="setGenre('${g}',this)">${g}</button>`).join('');
+}
+
+function applyF(){
+  FILT=ALL.filter(s=>{
+    if(aSrc&&s.source!==aSrc)return false;
+    if(aGenre&&!(s.genres||[]).includes(aGenre))return false;
+    return true;
+  });
+  vis=48;render();
+}
+
+function render(){
+  document.getElementById('cnt').textContent=FILT.length+' seri';
+  const sl=FILT.slice(0,vis);
+  if(!sl.length){
+    document.getElementById('grid').innerHTML='<div class="loading-msg">Sonuç yok.</div>';
+    document.getElementById('lmore').style.display='none';
+    return;
+  }
+  document.getElementById('grid').innerHTML=sl.map(s=>{
+    const cv=s.cover_url?API+'/proxy/image?url='+encodeURIComponent(s.cover_url):'';
+    return `<a class="card" href="/reader?series=${encodeURIComponent(s.url)}">
+      ${cv?`<img class="cimg" src="${cv}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
+      <div class="cph" style="display:${cv?'none':'flex'}">📖</div>
+      <div class="cbody">
+        <div class="ctitle">${s.title||'—'}</div>
+        <div class="cmeta">${s.latest_chapter||s.source||''}</div>
+      </div>
+    </a>`;
+  }).join('');
+  const rem=FILT.length-vis;
+  document.getElementById('lmore').style.display=rem>0?'block':'none';
+  document.getElementById('lmore').textContent='DAHA FAZLA ('+rem+' kaldı)';
+}
+
+function loadMore(){vis+=48;render();}
+
+function setGenre(g,btn){
+  aGenre=g;
+  document.querySelectorAll('#gf .fb').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  applyF();
+}
+function setSource(src,el){
+  aSrc=src;
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('act'));
+  el.classList.add('act');
+  applyF();
+}
+
+// Arama
+let st;
+async function doSearch(q){
+  clearTimeout(st);
+  const d=document.getElementById('sdrop');
+  if(!q||q.length<2){d.classList.remove('open');return;}
+  st=setTimeout(async()=>{
+    try{
+      const r=await fetch(API+'/search?q='+encodeURIComponent(q)+'&limit=8');
+      const j=await r.json();
+      const items=j.data||[];
+      if(!items.length){d.innerHTML='<div class="si-empty">Sonuç bulunamadı</div>';}
+      else{
+        d.innerHTML=items.map(s=>{
+          const cv=s.cover_url?API+'/proxy/image?url='+encodeURIComponent(s.cover_url):'';
+          return `<div class="si-item" onmousedown="go('${s.url}')">
+            ${cv?`<img class="si-thumb" src="${cv}" onerror="this.style.display='none'">`:'<div class="si-thumb" style="display:flex;align-items:center;justify-content:center">📖</div>'}
+            <div><div class="si-t">${s.title}</div><div class="si-m">${s.source||''} · ${s.latest_chapter||''}</div></div>
+          </div>`;
+        }).join('');
+      }
+      d.classList.add('open');
+    }catch(e){}
+  },280);
+}
+function showDrop(){if(document.getElementById('q').value.length>=2)document.getElementById('sdrop').classList.add('open');}
+function hideDrop(){document.getElementById('sdrop').classList.remove('open');}
+function go(url){window.location.href='/reader?series='+encodeURIComponent(url);}
+
+init();
+</script>
+</body>
+</html>
