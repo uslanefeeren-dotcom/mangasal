@@ -17,17 +17,16 @@ nav{display:flex;align-items:center;gap:24px;padding:0 32px;height:60px;backgrou
 .nav-links a{color:var(--muted);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s}
 .nav-links a:hover,.nav-links a.act{color:#fff}
 .sw{position:relative}
-.sw input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:8px 14px 8px 36px;font-size:12px;border-radius:4px;outline:none;width:220px;font-family:'Mulish',sans-serif;transition:.2s}
+.sw input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:8px 14px 8px 36px;font-size:12px;border-radius:4px;outline:none;width:220px;font-family:'Mulish',sans-serif}
 .sw input:focus{border-color:rgba(212,80,10,.5)}
 .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px;pointer-events:none}
-.sdrop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1a0e08;border:1px solid rgba(212,80,10,.4);border-radius:4px;z-index:9999;max-height:340px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
+.sdrop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#1a0e08;border:1px solid rgba(212,80,10,.4);border-radius:4px;z-index:9999;max-height:340px;overflow-y:auto;display:none}
 .sdrop.open{display:block}
-.si-item{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04);transition:.1s}
+.si-item{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)}
 .si-item:hover{background:rgba(212,80,10,.12)}
 .si-thumb{width:30px;height:42px;border-radius:3px;background:#150e08;object-fit:cover;flex-shrink:0}
 .si-t{font-size:12px;font-weight:700;color:#fff}
 .si-m{font-size:10px;color:var(--muted);margin-top:1px}
-.si-empty{padding:14px;text-align:center;color:var(--muted);font-size:11px}
 .hero{background:linear-gradient(180deg,rgba(212,80,10,.07) 0%,transparent 100%);border-bottom:1px solid var(--bdr);padding:40px 32px 32px;text-align:center}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:4px;color:#fff;margin-bottom:8px}
 .hero h1 em{color:var(--red);font-style:normal}
@@ -35,7 +34,7 @@ nav{display:flex;align-items:center;gap:24px;padding:0 32px;height:60px;backgrou
 .main{max-width:1200px;margin:0 auto;padding:28px 24px}
 .frow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:24px}
 .flbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-right:2px}
-.fb{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;font-family:'Mulish',sans-serif}
+.fb{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.08);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer}
 .fb:hover{background:rgba(212,80,10,.12);color:var(--red);border-color:rgba(212,80,10,.3)}
 .fb.act{background:rgba(212,80,10,.2);color:var(--red);border-color:var(--red)}
 .shdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
@@ -49,7 +48,7 @@ nav{display:flex;align-items:center;gap:24px;padding:0 32px;height:60px;backgrou
 .cbody{padding:8px 10px}
 .ctitle{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
 .cmeta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lmore{display:block;width:100%;margin-top:24px;padding:12px;background:rgba(212,80,10,.1);color:var(--red);border:1px solid rgba(212,80,10,.3);border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Mulish',sans-serif;transition:.2s;letter-spacing:1px}
+.lmore{display:block;width:100%;margin-top:24px;padding:12px;background:rgba(212,80,10,.1);color:var(--red);border:1px solid rgba(212,80,10,.3);border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;text-align:center}
 .lmore:hover{background:rgba(212,80,10,.2)}
 .loading-msg{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
 .spin{width:32px;height:32px;border:3px solid rgba(212,80,10,.2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
@@ -58,7 +57,7 @@ footer{text-align:center;padding:28px;color:var(--muted);font-size:11px;border-t
 @media(max-width:600px){
   nav{padding:0 16px;gap:12px}.nav-links{display:none}.sw input{width:160px}
   .hero{padding:28px 16px 22px}.hero h1{font-size:36px}
-  .main{padding:18px 12px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .main{padding:18px 12px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
 }
 </style>
 </head>
@@ -87,7 +86,7 @@ footer{text-align:center;padding:28px;color:var(--muted);font-size:11px;border-t
   <div class="frow" id="gf"><span class="flbl">Tür:</span><button class="fb act" onclick="setGenre('',this)">Tümü</button></div>
   <div class="shdr"><span class="stitle">SERİLER</span><span class="scnt" id="cnt"></span></div>
   <div class="grid" id="grid"><div class="loading-msg"><div class="spin"></div><p style="margin-top:12px">Yükleniyor...</p></div></div>
-  <button class="lmore" id="lmore" style="display:none" onclick="loadMore()">DAHA FAZLA</button>
+  <div class="lmore" id="lmore" style="display:none" onclick="loadMore()">DAHA FAZLA</div>
 </div>
 
 <footer>Mangasal — Gölge Bahçesi &amp; Ragnar Scans Rehberi</footer>
@@ -98,15 +97,10 @@ let ALL=[],FILT=[],vis=48,aGenre='',aSrc='';
 
 async function init(){
   try{
-    const [a,b]=await Promise.all([
-      fetch(API+'/trending?limit=200').then(r=>r.json()),
-      fetch(API+'/latest?limit=200').then(r=>r.json())
-    ]);
-    const seen=new Set();
-    ALL=[];
-    for(const s of [...(a.data||[]),...(b.data||[])]){
-      if(!seen.has(s.url)){seen.add(s.url);ALL.push(s);}
-    }
+    const res=await fetch(API+'/trending?limit=300');
+    const j=await res.json();
+    if(j.status==='ok' && j.data) ALL=j.data;
+    else ALL=[];
     buildGenres();
     applyF();
   }catch(e){
@@ -141,37 +135,28 @@ function render(){
     return;
   }
   document.getElementById('grid').innerHTML=sl.map(s=>{
-    const cv=s.cover_url?API+'/proxy/image?url='+encodeURIComponent(s.cover_url):'';
+    let imgHtml='';
+    if(s.cover_url){
+      imgHtml=`<img class="cimg" src="${API}/proxy/image?url=${encodeURIComponent(s.cover_url)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`;
+    }
     return `<a class="card" href="/reader?series=${encodeURIComponent(s.url)}">
-      ${cv?`<img class="cimg" src="${cv}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
-      <div class="cph" style="display:${cv?'none':'flex'}">📖</div>
+      ${imgHtml}
+      <div class="cph" style="display:${s.cover_url?'none':'flex'}">📖</div>
       <div class="cbody">
-        <div class="ctitle">${s.title||'—'}</div>
+        <div class="ctitle">${escapeHtml(s.title||'—')}</div>
         <div class="cmeta">${s.latest_chapter||s.source||''}</div>
       </div>
     </a>`;
   }).join('');
   const rem=FILT.length-vis;
   document.getElementById('lmore').style.display=rem>0?'block':'none';
-  document.getElementById('lmore').textContent='DAHA FAZLA ('+rem+' kaldı)';
+  document.getElementById('lmore').innerHTML=rem>0?`DAHA FAZLA (${rem} kaldı)`: '';
 }
 
 function loadMore(){vis+=48;render();}
+function setGenre(g,btn){aGenre=g; document.querySelectorAll('#gf .fb').forEach(b=>b.classList.remove('act')); btn.classList.add('act'); applyF();}
+function setSource(src,el){aSrc=src; document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('act')); el.classList.add('act'); applyF();}
 
-function setGenre(g,btn){
-  aGenre=g;
-  document.querySelectorAll('#gf .fb').forEach(b=>b.classList.remove('act'));
-  btn.classList.add('act');
-  applyF();
-}
-function setSource(src,el){
-  aSrc=src;
-  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('act'));
-  el.classList.add('act');
-  applyF();
-}
-
-// Arama
 let st;
 async function doSearch(q){
   clearTimeout(st);
@@ -185,10 +170,11 @@ async function doSearch(q){
       if(!items.length){d.innerHTML='<div class="si-empty">Sonuç bulunamadı</div>';}
       else{
         d.innerHTML=items.map(s=>{
-          const cv=s.cover_url?API+'/proxy/image?url='+encodeURIComponent(s.cover_url):'';
+          let thumb='<div class="si-thumb" style="display:flex;align-items:center;justify-content:center">📖</div>';
+          if(s.cover_url) thumb=`<img class="si-thumb" src="${API}/proxy/image?url=${encodeURIComponent(s.cover_url)}" onerror="this.style.display='none'">`;
           return `<div class="si-item" onmousedown="go('${s.url}')">
-            ${cv?`<img class="si-thumb" src="${cv}" onerror="this.style.display='none'">`:'<div class="si-thumb" style="display:flex;align-items:center;justify-content:center">📖</div>'}
-            <div><div class="si-t">${s.title}</div><div class="si-m">${s.source||''} · ${s.latest_chapter||''}</div></div>
+            ${thumb}
+            <div><div class="si-t">${escapeHtml(s.title)}</div><div class="si-m">${s.source||''} · ${s.latest_chapter||''}</div></div>
           </div>`;
         }).join('');
       }
@@ -199,7 +185,7 @@ async function doSearch(q){
 function showDrop(){if(document.getElementById('q').value.length>=2)document.getElementById('sdrop').classList.add('open');}
 function hideDrop(){document.getElementById('sdrop').classList.remove('open');}
 function go(url){window.location.href='/reader?series='+encodeURIComponent(url);}
-
+function escapeHtml(str){if(!str)return ''; return str.replace(/[&<>]/g,function(m){if(m==='&')return '&amp;';if(m==='<')return '&lt;';if(m==='>')return '&gt;';return m;});}
 init();
 </script>
 </body>
